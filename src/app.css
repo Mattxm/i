@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .h-item {
+        @apply mr-4 items-center flex whitespace-nowrap
+    }
+    .menu { 
+        @apply py-2 border overflow-hidden border-thirdary bg-secondary rounded-md grid space-y-1 
+    }
+    .m-item {
+        @apply px-4 hover:bg-slate-400
+    }
+}
