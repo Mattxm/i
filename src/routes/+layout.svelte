@@ -1,16 +1,48 @@
 <script lang="ts">
     import "../app.css";
-    import { Popover, PopoverButton, PopoverPanel } from "@rgossiaux/svelte-headlessui";
-    import { AirplayIcon, AtSignIcon, ChevronDownIcon, BellIcon } from 'svelte-feather-icons'
+    import { Popover, PopoverButton, PopoverPanel, Menu, MenuButton, MenuItems, MenuItem, } from "@rgossiaux/svelte-headlessui";
+    import { ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon } from 'svelte-feather-icons'
 
+
+    // Notifications
+    let nlist = [
+        {text: "New Message from X"},
+    ]
+    $: notifications = nlist.length
+
+    // New
+    const alist = [
+        {text: "New X"},
+        {text: "New Y"},
+        {text: "New Z"},
+    ]
+
+    // Search bar 
     let search = "";
-    let si = 0;
-
-    function sbkb(e: any){
+    let si = -1;
+    let cslist = [
+        {text: "Search All"},
+        {text: "Search X"},
+        {text: "Search Y"},
+    ]
+    let pslist = [
+        {text: "Option 1"},
+        {text: "Option 2"},
+        {text: "Option 3"},
+    ]
+    $: slist = [...cslist, ...pslist]
+    function sbkb(e: any){   
         switch (e.keyCode){
-            case 38: console.log("up"); break;
-            case 40: console.log("down"); break;
+            case 38: si--; e.preventDefault(); break;
+            case 40: si++; e.preventDefault(); break;
         }
+        si = Math.min(Math.max(si, 0), slist.length - 1)
+    }
+    function sbci(e: any){
+        if (search.replace(/\s/g, "") !== "")
+            si = 0
+        else
+            si = -1
     }
 </script>
   
@@ -19,22 +51,24 @@
         <div class="h-item">
             <img class="max-w-none" width="32" height="32" src="inv2.svg" alt="logo">
         </div>
-       
         <div class="h-item flex-auto">
-            <div role="search" class="h-item search-container focus-within:flex-1 transition-all duration-300 ease-linear">
+            <div role="search" class="h-item relative search-container focus-within:flex-1 transition-all duration-300 ease-linear">
                 <form class="w-full" on:submit|preventDefault={()=>{console.log(search);
                 }}>
                     <label>
                         <input size="20" class="peer w-full rounded-sm focus:text-white focus:bg-secondary px-2 focus:outline-none bg-primary border border-thirdary transition-transform ease-linear" 
-                        placeholder="Search" bind:value={search} type="text"
-                        aria-activedescendant="selected" aria-autocomplete="list" aria-owns="searchbox"
+                        placeholder="Search" type="text" spellcheck="false" aria-haspopup="listbox" aria-activedescendant="selected" aria-autocomplete="list" aria-owns="searchbox"
+                        bind:value={search}
                         on:keydown={(e)=>{sbkb(e)}}
-                        on:focusout={()=>{console.log("focus out")}} on:focus={()=>{console.log("focus")}} />
+                        on:focusout={()=>{si = -1}}
+                        on:focus={()=>{if (search.replace(/\s/g, "") !== "") si = 0}}
+                        on:input={(e)=>{sbci(e)}}
+                        />
                         
-                        <ul role="listbox" id="searchbox" class="menu absolute overflow-hidden invisible peer-focus:visible">
-                            <li role="option" aria-selected="false">test 1</li>
-                            <li role="option">test 2</li>
-                            <li role="option">test 3</li>
+                        <ul role="listbox" id="searchbox" class="menu left-0 right-0 absolute invisible peer-focus:visible">
+                            {#each slist as slitem, i}
+                                <li on:mouseenter={()=>{si = i}} role="option" aria-selected={si == i} class="aria-selected:bg-red-400 px-4">{slitem.text}</li>
+                            {/each}
                         </ul>    
                     </label>
                 </form>
@@ -45,40 +79,64 @@
                 <a class="focus:text-zinc-200 hover:text-zinc-200" href="/" >Section 3</a>
             </nav>
         </div>
-        <Popover class="relative h-item">
-            <PopoverButton class="flex items-center bg-green-400 focus:bg-green-500 hover:bg-green-500 focus:text-zinc-200 hover:text-zinc-200 px-2 rounded-sm">
-                    new
-                    <ChevronDownIcon size="15" class="text-white ml-1"/>
-
-            </PopoverButton>
-          
-            <PopoverPanel class="absolute right-0 top-8 z-10  w-screen max-w-xs">
-              <div class="menu">
-                <a class="m-item" href="/">Option 1</a>
-                <a class="m-item" href="/">Option 2</a>
-                <a class="m-item" href="/">Option 3</a>
-                <a class="m-item" href="/">Option 4</a>
-              </div>
-            </PopoverPanel>
-        </Popover>
+        <Menu class="relative h-item">
+            <MenuButton class="flex items-center bg-green-400 focus:bg-green-500 hover:bg-green-500 focus:text-zinc-200 hover:text-zinc-200 px-2 rounded-sm">
+                new
+                <ChevronDownIcon size="15" class="text-white ml-1"/>
+            </MenuButton>
+            <MenuItems class="absolute right-0 top-8 flex flex-col menu max-w-xxs w-screen">
+                {#each alist as alitem}
+                    <MenuItem let:active>
+                        <div class={`${active ? "bg-red-400" : ""} px-4`}>
+                            <a href="/">{alitem.text}</a>
+                        </div>
+                    </MenuItem>
+                {/each}
+            </MenuItems>
+        </Menu>
         <Popover class="relative h-item">
             <PopoverButton class="focus:text-zinc-200 hover:text-zinc-200">
                 <BellIcon size="20"/>
+                <span class={`${notifications > 0 ? "visible" : "hidden"} absolute text-xs px-1 top-0 -right-1 bg-red-400 rounded-full`}>{notifications}</span>
             </PopoverButton>
           
-            <PopoverPanel class="absolute right-0 top-8 z-10  w-screen max-w-xs">
-              <div class="menu px-4">
-                No new notifactions
-              </div>
+            <PopoverPanel class="absolute menu right-0 top-8 w-screen max-w-xs">
+                <div class="flex border-b px-4 pb-2 items-center border-thirdary">
+                    <span class="flex-1"><a href="/notifications" class="focus:text-zinc-200 hover:text-zinc-200">Notifications</a></span>
+                    <a href="/" class="hover:text-zinc-200"><SettingsIcon size="20"/></a>
+                </div>
+                {#if notifications == 0}
+                    <span class="px-4">No new notifactions</span>
+                {:else}
+                    {#each nlist as nlitem, i}
+                        <span class="flex items-center px-4">
+                            <span class="flex-1">{nlitem.text}</span>
+                            <span on:click={()=>{nlist = [...nlist.slice(0, i),...nlist.slice(i+1)]}} class="hover:bg-red-400 p-0.5 rounded-full"><XIcon size="20"/></span>
+                        </span>
+                    {/each}
+                {/if}
+                
+                
             </PopoverPanel>
         </Popover>
-        <div class="h-item flex">
-            <div class=" rounded-full bg-white h-8 w-8"/>
-            <!-- Profile Icon Here -->
-        </div>
+        <Menu class="relative h-item">
+            <MenuButton class="">
+                <div class=" rounded-full bg-white h-8 w-8"/>
+            </MenuButton>
+            <MenuItems class="absolute right-0 top-8 flex flex-col menu max-w-xs w-screen">
+                {#each alist as alitem}
+                    <MenuItem let:active>
+                        <div class={`${active ? "bg-red-400" : ""} px-4`}>
+                            <a href="/">{alitem.text}</a>
+                        </div>
+                    </MenuItem>
+                {/each}
+            </MenuItems>
+        </Menu>
     </header>
 </div>
 
+  
 
 <slot />
 

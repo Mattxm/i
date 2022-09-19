@@ -4,10 +4,10 @@
 
 @layer components {
     .h-item {
-        @apply mr-4 items-center flex whitespace-nowrap
+        @apply mr-4 items-center flex whitespace-nowrap last:mr-0
     }
     .menu { 
-        @apply py-2 border overflow-hidden border-thirdary bg-secondary rounded-md grid space-y-1 
+        @apply py-2 border overflow-hidden border-thirdary bg-secondary rounded-b-sm grid space-y-1 shadow-lg
     }
     .m-item {
         @apply px-4 hover:bg-slate-400

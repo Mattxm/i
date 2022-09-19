@@ -9,8 +9,11 @@ module.exports = {
         thirdary: "#565656",
         fourthary: "",
         highlight: "#f2ef8a",
+      },
+      maxWidth: {
+        "xxs": "10rem",
       }
     },
   },
-  plugins: [],
+  plugins: [require("@thoughtbot/tailwindcss-aria-attributes"),],
 }
