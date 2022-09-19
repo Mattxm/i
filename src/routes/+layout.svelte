@@ -1,8 +1,11 @@
 <script lang="ts">
     import "../app.css";
-    import { Popover, PopoverButton, PopoverPanel, Menu, MenuButton, MenuItems, MenuItem, } from "@rgossiaux/svelte-headlessui";
-    import { ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon } from 'svelte-feather-icons'
+    import { Switch, Popover, PopoverButton, PopoverPanel, Menu, MenuButton, MenuItems, MenuItem, } from "@rgossiaux/svelte-headlessui";
+    import { MoonIcon, SunIcon, ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon, UserIcon, DollarSignIcon, LogOutIcon } from 'svelte-feather-icons'
 
+    // User
+    let userelement: HTMLElement
+    let darktheme = true
 
     // Notifications
     let nlist = [
@@ -101,8 +104,8 @@
             </PopoverButton>
           
             <PopoverPanel class="absolute menu right-0 top-8 w-screen max-w-xs">
-                <div class="flex border-b px-4 pb-2 items-center border-thirdary">
-                    <span class="flex-1"><a href="/notifications" class="focus:text-zinc-200 hover:text-zinc-200">Notifications</a></span>
+                <div class="flex px-4 items-center border-b border-thirdary">
+                    <span class="flex-1"><a href="/notifications" class="focus:text-zinc-200 hover:text-zinc-200 leading-8">Notifications</a></span>
                     <a href="/" class="hover:text-zinc-200"><SettingsIcon size="20"/></a>
                 </div>
                 {#if notifications == 0}
@@ -120,17 +123,58 @@
             </PopoverPanel>
         </Popover>
         <Menu class="relative h-item">
-            <MenuButton class="">
-                <div class=" rounded-full bg-white h-8 w-8"/>
+            <MenuButton as="div"  class="">
+                <div bind:this={userelement} class=" rounded-full bg-white h-7 w-7"/>
             </MenuButton>
-            <MenuItems class="absolute right-0 top-8 flex flex-col menu max-w-xs w-screen">
-                {#each alist as alitem}
-                    <MenuItem let:active>
-                        <div class={`${active ? "bg-red-400" : ""} px-4`}>
-                            <a href="/">{alitem.text}</a>
-                        </div>
-                    </MenuItem>
-                {/each}
+            <MenuItems class="absolute right-0 top-8 flex flex-col menu max-w-xxs w-screen leading-8 text-sm">
+                <MenuItem let:active>
+                    <div class={`${active ? "bg-red-400" : ""} px-4 flex items-center border-b border-thirdary`}>
+                        <UserIcon size="15"/>
+                        <a href="/" class="pl-2">Profile</a>
+                    </div>
+                </MenuItem>
+                <MenuItem let:active>
+                    <div class={`${active ? "bg-red-400" : ""} px-4 flex items-center`}>
+                        <BellIcon size="15"/>
+                        <a href="/" class="pl-2">Notifications</a>
+                    </div>
+                </MenuItem>
+                <MenuItem let:active>
+                    <div class={`${active ? "bg-red-400" : ""} px-4 flex items-center`}>
+                        <DollarSignIcon size="15"/>
+                        <a href="/" class="pl-2">Earnings</a>
+                    </div>
+                </MenuItem>
+                <MenuItem let:active>
+                    <div class={`${active ? "bg-red-400" : ""} px-4 flex items-center border-t border-thirdary`}>
+                        <SettingsIcon size="15"/>
+                        <a href="/" class="pl-2">Settings</a>
+                    </div>
+                </MenuItem>
+                <MenuItem let:active on:click={()=>{setTimeout(() => {userelement.click()}, 0);}}>
+                    <div class={`${active ? "bg-red-400" : ""} px-4 flex items-center`}>
+                        {#if darktheme}
+                            <MoonIcon size="15"/>
+                        {:else}
+                            <SunIcon size="15"/>
+                        {/if}
+                        
+                        <a href="/" class="pl-2 flex-1">Theme</a>
+                        <Switch
+                        checked={darktheme}
+                        on:change={(e)=>{darktheme = e.detail}}
+                        class={`${darktheme ? "bg-red-400" : "bg-green-400"} relative inline-flex h-4 w-7 items-center rounded-full`}
+                        >
+                        <span class={`${darktheme ? "translate-x-3" : "translate-x-1"} bg-white inline-block h-3 w-3 items-center rounded-full transition-transform`} />
+                        </Switch>
+                    </div>
+                </MenuItem>    
+                <MenuItem let:active>
+                    <div class={`${active ? "bg-red-400" : ""} px-4 flex items-center border-t border-thirdary`}>
+                        <LogOutIcon size="15"/>
+                        <a href="/" class="pl-2">Log Out</a>
+                    </div>
+                </MenuItem>                   
             </MenuItems>
         </Menu>
     </header>
