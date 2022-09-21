@@ -4,10 +4,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#2b2b2b",
-        secondary: "#1c1c1c",
-        thirdary: "#565656",
-        fourthary: "",
+        primary: {light: "#f5f5f5", dark: "#2b2b2b"},
+        secondary: {light: "#f7f7f7", dark: "#1c1c1c"},
+        thirdary: "#363636",
         highlight: "#f2ef8a",
       },
       maxWidth: {
@@ -15,5 +14,6 @@ module.exports = {
       }
     },
   },
+  darkMode: 'class',
   plugins: [require("@thoughtbot/tailwindcss-aria-attributes"),],
 }

@@ -7,6 +7,12 @@
         @apply mr-4 items-center flex whitespace-nowrap last:mr-0
     }
     .menu { 
-        @apply border overflow-hidden border-thirdary bg-secondary rounded-md grid shadow-lg
+        @apply border p-1 overflow-hidden border-thirdary bg-secondary-light dark:bg-secondary-dark rounded-md grid shadow-lg
+    }
+    .m-item {
+        @apply px-2 rounded-sm flex items-center hover:bg-red-400
+    }
+    .c-text {
+        @apply text-black dark:text-white hover:text-zinc-900 dark:hover:text-zinc-200 aria-selected:bg-zinc-900 dark:aria-selected:text-zinc-200
     }
 }
