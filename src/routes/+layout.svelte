@@ -90,6 +90,9 @@
 </script>
   
 <div class="relative">
+    <a href="#main" class="absolute left-5 top-5 -z-50 focus:z-50 bg-secondary-light dark:bg-secondary-dark text-black dark:text-white">
+        Skip to main content
+    </a>
     <header class="flex p-4 bg-secondary-light dark:bg-secondary-dark text-black dark:text-white">
         <div class="h-item">
             <!-- <img class="max-w-none" width="32" height="32" src="inv2.svg" alt="logo"> -->
