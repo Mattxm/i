@@ -1,11 +1,17 @@
 <script lang="ts">
     import "../app.css";
+    import { user } from '$lib/sessionStore'
+    import { supabase } from '$lib/supabaseClient'
+
     import { Switch, Popover, PopoverButton, PopoverPanel } from "@rgossiaux/svelte-headlessui";
     import { MoonIcon, SunIcon, ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon, UserIcon, DollarSignIcon, LogOutIcon, PlusSquareIcon, FolderPlusIcon, ZapIcon } from 'svelte-feather-icons'
     import { onMount } from "svelte";
 
 
     // User
+    
+    let user = supabase.auth.user()
+    console.log(user);
     enum Theme { System = 1, Light, Dark}
     let darktheme = false
     let userTheme = Theme.System
@@ -89,7 +95,7 @@
     }
 </script>
   
-<div class="relative">
+<div class="relative box-border">
     <a href="#main" class="absolute left-5 top-5 -z-50 focus:z-50 bg-secondary-light dark:bg-secondary-dark text-black dark:text-white">
         Skip to main content
     </a>
@@ -126,6 +132,12 @@
                 <a class="c-text" href="/" >Services</a>
             </nav>
         </div>
+
+        {#if user != null}
+            SIGNED IN
+        {:else}
+            SIGNED OUT
+        {/if}
         <Popover class="relative h-item">
             <PopoverButton class="c-text flex items-center bg-green-400 focus:bg-green-500 hover:bg-green-500 px-2 rounded-sm">
                 new
@@ -175,26 +187,26 @@
             </PopoverButton>
             <PopoverPanel on:mousemove={()=>{}} class="absolute right-0 top-8 flex flex-col menu max-w-xxs w-screen leading-8">
                 
-                <a href="/" class="m-item">
+                <a href="/profile" class="m-item">
                     <UserIcon size="15"/>
                     <span class="pl-2">Profile</span>
                 </a>
 
                 <span class="h-px my-1 bg-thirdary" />
 
-                <a href="/" class="m-item">
+                <a href="/notifications" class="m-item">
                     <BellIcon size="15"/>
                     <span class="pl-2">Notifications</span>
                 </a>
 
-                <a href="/" class="m-item">
+                <!-- <a href="/" class="m-item">
                     <DollarSignIcon size="15"/>
                     <span class="pl-2">Earnings</span>
-                </a>
+                </a> -->
 
                 <span class="h-px my-1 bg-thirdary" />
 
-                <a href="/" class="m-item">
+                <a href="/settings" class="m-item">
                     <SettingsIcon size="15"/>
                     <span class="pl-2">Settings</span>
                 </a>
@@ -219,11 +231,10 @@
 
                 <span class="h-px my-1 bg-thirdary" />
 
-                <a href="/" class="m-item">
+                <button on:click={()=>{console.log("sign out")}} class="m-item">
                     <LogOutIcon size="15"/>
                     <span class="pl-2">Log Out</span>
-                </a>
-                
+                </button>
             </PopoverPanel>
         </Popover>
     </header>
