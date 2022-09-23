@@ -15,4 +15,22 @@
     .c-text {
         @apply text-black dark:text-white hover:text-zinc-900 dark:hover:text-zinc-200 aria-selected:bg-zinc-900 dark:aria-selected:text-zinc-200
     }
+    .generic {
+        @apply text-black dark:text-white bg-primary-light dark:bg-primary-dark
+    }
+}
+@layer base{
+    * {
+        scrollbar-width: auto;
+        scrollbar-color: rgb(28 28 28) rgb(43 43 43);
+    }
+    ::-webkit-scrollbar {
+        @apply w-3 h-3
+    }
+    ::-webkit-scrollbar-track {
+        @apply bg-secondary-light dark:bg-secondary-dark
+    }
+    ::-webkit-scrollbar-thumb {
+        @apply dark:bg-zinc-400 bg-primary-dark rounded-full border-solid border-2 border-secondary-light dark:border-secondary-dark hover:bg-thirdary dark:hover:bg-thirdary
+    }
 }
