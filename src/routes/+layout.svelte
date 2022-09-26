@@ -1,17 +1,33 @@
 <script lang="ts">
     import "../app.css";
-    import { user } from '$lib/sessionStore'
+    import { signedIn } from '$lib/userStore'
     import { supabase } from '$lib/supabaseClient'
 
-    import { Switch, Popover, PopoverButton, PopoverPanel } from "@rgossiaux/svelte-headlessui";
-    import { MoonIcon, SunIcon, ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon, UserIcon, DollarSignIcon, LogOutIcon, PlusSquareIcon, FolderPlusIcon, ZapIcon } from 'svelte-feather-icons'
+    import { Popover, PopoverButton, PopoverPanel } from "@rgossiaux/svelte-headlessui";
+    import { MoonIcon, SunIcon, ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon, UserIcon, DollarSignIcon, LogOutIcon, PlusSquareIcon, FolderPlusIcon, ZapIcon, LogInIcon } from 'svelte-feather-icons'
     import { onMount } from "svelte";
 
-
-    // User
+    // Auth
     
-    let user = supabase.auth.user()
-    console.log(user);
+    async function checkSession() {
+        const { data, error } = await supabase.auth.getSession()
+        if (data.session == null){
+            signedIn.set(false)
+        }
+        else{
+            signedIn.set(true) 
+        }
+                     
+    }
+    async function signOut() {
+        const { error } = await supabase.auth.signOut()
+        if (error) throw error
+        else
+            signedIn.set(false)
+    }
+
+
+    // User    
     enum Theme { System = 1, Light, Dark}
     let darktheme = false
     let userTheme = Theme.System
@@ -42,6 +58,7 @@
         }
     }
     onMount(()=>{
+        checkSession()
         if (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches){
             userTheme = Theme.System
             darktheme = true
@@ -57,7 +74,7 @@
         if (localStorage.theme === "light") {
             userTheme = Theme.Light
             darktheme = false
-        }
+        }        
     })
 
     // Notifications
@@ -126,117 +143,152 @@
                     </label>
                 </form>
             </div>
-            <nav class="h-item space-x-4">
+            <!-- <nav class="h-item space-x-4">
                 <a class="c-text" href="/" >Information</a>
                 <a class="c-text" href="/" >Listings</a>
                 <a class="c-text" href="/" >Services</a>
-            </nav>
+            </nav> -->
         </div>
 
-        {#if user != null}
-            SIGNED IN
-        {:else}
-            SIGNED OUT
-        {/if}
-        <Popover class="relative h-item">
-            <PopoverButton class="c-text flex items-center bg-green-400 focus:bg-green-500 hover:bg-green-500 px-2 rounded-sm">
-                new
-                <ChevronDownIcon size="15" class="ml-1"/>
-            </PopoverButton>
-            <PopoverPanel class="absolute right-0 top-8 flex flex-col menu max-w-xxs w-screen">
-                <a href="/" class="m-item">
-                    <PlusSquareIcon size="15"/>
-                    <span class="pl-2">New Post</span>
-                </a>
-                <a href="/" class="m-item">
-                    <FolderPlusIcon size="15"/>
-                    <span class="pl-2">New Collection</span>
-                </a>
-                </PopoverPanel>
-        </Popover>
-        <Popover class="relative h-item">
-            <PopoverButton>
-                <BellIcon class="c-text" size="20"/>
-                <span class={`${notifications > 0 ? "visible" : "hidden"} absolute text-xs px-1 top-0 -right-1 bg-red-400 rounded-full`}>{notifications}</span>
-            </PopoverButton>
-          
-            <PopoverPanel class="menu absolute right-0 top-8 w-screen max-w-xs">
-                <div class="flex px-4 items-center">
-                    <span class="c-text flex-1"><a href="/notifications">Notifications</a></span>
-                    <a href="/" class="c-text"><SettingsIcon size="20"/></a>
-                </div>
-                <span class="h-px my-1 bg-thirdary" />
-                {#if notifications == 0}
-                    <span class="px-4">No new notifactions</span>
-                    
-                {:else}
-                    {#each nlist as nlitem, i}
-                        <span class="flex items-center px-4">
-                            <span class="flex-1">{nlitem.text}</span>
-                            <span on:click={()=>{nlist = [...nlist.slice(0, i),...nlist.slice(i+1)]}} class="hover:bg-red-400 rounded-full"><XIcon size="20"/></span>
-                        </span>
-                    {/each}
-                {/if}
-                
-                
-            </PopoverPanel>
-        </Popover>
-        <Popover class="relative h-item">
-            <PopoverButton>
-                <div class=" rounded-full bg-white h-7 w-7 border border-thirdary"/>
-            </PopoverButton>
-            <PopoverPanel on:mousemove={()=>{}} class="absolute right-0 top-8 flex flex-col menu max-w-xxs w-screen leading-8">
-                
-                <a href="/profile" class="m-item">
-                    <UserIcon size="15"/>
-                    <span class="pl-2">Profile</span>
-                </a>
-
-                <span class="h-px my-1 bg-thirdary" />
-
-                <a href="/notifications" class="m-item">
-                    <BellIcon size="15"/>
-                    <span class="pl-2">Notifications</span>
-                </a>
-
-                <!-- <a href="/" class="m-item">
-                    <DollarSignIcon size="15"/>
-                    <span class="pl-2">Earnings</span>
-                </a> -->
-
-                <span class="h-px my-1 bg-thirdary" />
-
-                <a href="/settings" class="m-item">
-                    <SettingsIcon size="15"/>
-                    <span class="pl-2">Settings</span>
-                </a>
-
-                <button on:click={handleThemeChange} class="m-item text-left">
-                    {#if darktheme}
-                        <MoonIcon size="15"/>
+        {#if $signedIn == true}
+            <Popover class="relative h-item">
+                <PopoverButton class="c-text flex items-center bg-green-400 focus:bg-green-500 hover:bg-green-500 px-2 rounded-sm">
+                    new
+                    <ChevronDownIcon size="15" class="ml-1"/>
+                </PopoverButton>
+                <PopoverPanel class="absolute right-0 top-8 flex flex-col menu max-w-xxs w-screen">
+                    <a href="/" class="m-item">
+                        <PlusSquareIcon size="15"/>
+                        <span class="pl-2">New Post</span>
+                    </a>
+                    <a href="/" class="m-item">
+                        <FolderPlusIcon size="15"/>
+                        <span class="pl-2">New Collection</span>
+                    </a>
+                    </PopoverPanel>
+            </Popover>
+            <Popover class="relative h-item">
+                <PopoverButton>
+                    <BellIcon class="c-text" size="20"/>
+                    <span class={`${notifications > 0 ? "visible" : "hidden"} absolute text-xs px-1 top-0 -right-1 bg-red-400 rounded-full`}>{notifications}</span>
+                </PopoverButton>
+            
+                <PopoverPanel class="menu absolute right-0 top-8 w-screen max-w-xs">
+                    <div class="flex px-4 items-center">
+                        <span class="c-text flex-1"><a href="/notifications">Notifications</a></span>
+                        <a href="/" class="c-text"><SettingsIcon size="20"/></a>
+                    </div>
+                    <span class="h-px my-1 bg-thirdary" />
+                    {#if notifications == 0}
+                        <span class="px-4">No new notifactions</span>
+                        
                     {:else}
-                        <SunIcon size="15"/>
+                        {#each nlist as nlitem, i}
+                            <span class="flex items-center px-4">
+                                <span class="flex-1">{nlitem.text}</span>
+                                <span on:click={()=>{nlist = [...nlist.slice(0, i),...nlist.slice(i+1)]}} class="hover:bg-red-400 rounded-full"><XIcon size="20"/></span>
+                            </span>
+                        {/each}
                     {/if}
-                    <span class="ml-2 flex-1">Theme</span>
-                    <span class="leading-3 p-1 rounded-md border border-thirdary">
-                        {#if userTheme === Theme.System}
-                            System
-                        {:else if userTheme === Theme.Light}
-                            Light
+                    
+                    
+                </PopoverPanel>
+            </Popover>
+            <Popover class="relative h-item">
+                <PopoverButton>
+                    <div class=" rounded-full bg-white h-7 w-7 border border-thirdary"/>
+                </PopoverButton>
+                <PopoverPanel on:mousemove={()=>{}} class="absolute right-0 top-8 flex flex-col menu max-w-xxs w-screen leading-8">
+                    
+                    <a href="/profile" class="m-item">
+                        <UserIcon size="15"/>
+                        <span class="pl-2">Profile</span>
+                    </a>
+
+                    <span class="h-px my-1 bg-thirdary" />
+
+                    <a href="/notifications" class="m-item">
+                        <BellIcon size="15"/>
+                        <span class="pl-2">Notifications</span>
+                    </a>
+
+                    <!-- <a href="/" class="m-item">
+                        <DollarSignIcon size="15"/>
+                        <span class="pl-2">Earnings</span>
+                    </a> -->
+
+                    <span class="h-px my-1 bg-thirdary" />
+
+                    <a href="/settings" class="m-item">
+                        <SettingsIcon size="15"/>
+                        <span class="pl-2">Settings</span>
+                    </a>
+
+                    <button on:click={handleThemeChange} class="m-item text-left">
+                        {#if darktheme}
+                            <MoonIcon size="15"/>
                         {:else}
-                            Dark
+                            <SunIcon size="15"/>
                         {/if}
-                    </span>
-                </button>                   
+                        <span class="ml-2 flex-1">Theme</span>
+                        <span class="leading-3 p-1 rounded-md border border-thirdary">
+                            {#if userTheme === Theme.System}
+                                Auto
+                            {:else if userTheme === Theme.Light}
+                                Light
+                            {:else}
+                                Dark
+                            {/if}
+                        </span>
+                    </button>                   
 
-                <span class="h-px my-1 bg-thirdary" />
+                    <span class="h-px my-1 bg-thirdary" />
 
-                <button on:click={()=>{console.log("sign out")}} class="m-item">
-                    <LogOutIcon size="15"/>
-                    <span class="pl-2">Log Out</span>
-                </button>
-            </PopoverPanel>
-        </Popover>
+                    <button on:click={signOut} class="m-item">
+                        <LogOutIcon size="15"/>
+                        <span class="pl-2">Log Out</span>
+                    </button>
+                </PopoverPanel>
+            </Popover>
+        {:else if $signedIn == false}
+            <a href="/login" class="bg-primary-light dark:bg-primary-dark hover:bg-zinc-300 dark:hover:bg-zinc-800 border border-thirdary px-2 rounded-md mr-2" >Log In</a>
+            <a href="/signup" class="bg-primary-dark border border-thirdary px-2 rounded-md" >Sign Up</a>
+            
+            <Popover class="relative h-item">
+                <PopoverButton class="ml-2">
+                    <UserIcon size="24"></UserIcon>
+                </PopoverButton>
+                <PopoverPanel on:mousemove={()=>{}} class="absolute right-0 top-8 flex flex-col menu max-w-xxs w-screen leading-8">
+                    <button on:click={handleThemeChange} class="m-item text-left">
+                        {#if darktheme}
+                            <MoonIcon size="15"/>
+                        {:else}
+                            <SunIcon size="15"/>
+                        {/if}
+                        <span class="ml-2 flex-1">Theme</span>
+                        <span class="leading-3 p-1 rounded-md border border-thirdary">
+                            {#if userTheme === Theme.System}
+                                Auto
+                            {:else if userTheme === Theme.Light}
+                                Light
+                            {:else}
+                                Dark
+                            {/if}
+                        </span>
+                    </button>                 
+
+                    <span class="h-px my-1 bg-thirdary" />
+
+                    <a href="/login" class="m-item">
+                        <LogInIcon size="15"/>
+                        <span class="pl-2">Log In</span>
+                    </a>
+                </PopoverPanel>
+            </Popover>
+        {:else}
+            AAAAAAAAAAAAAAAAAAAA
+        {/if}
+        
     </header>
 </div>
 
@@ -245,12 +297,6 @@
 <slot />
 
 <style>
-    .to{
-        transform:translateX(1rem);
-    }
-    .tf{
-        transform:translateX(0.2rem);
-    }
     .search-container{
         min-width: 15rem;
         max-width: 30rem;
