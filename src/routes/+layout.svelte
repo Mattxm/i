@@ -2,13 +2,19 @@
     import "../app.css";
     import { signedIn } from '$lib/userStore'
     import { supabase } from '$lib/supabaseClient'
+    import Signup from "$lib/signup.svelte";
+    import Login from "$lib/login.svelte";
 
-    import { Popover, PopoverButton, PopoverPanel } from "@rgossiaux/svelte-headlessui";
+    import { Popover, PopoverButton, PopoverPanel, Dialog, DialogOverlay, DialogDescription, DialogTitle, Tab, TabGroup, TabList, TabPanel, TabPanels } from "@rgossiaux/svelte-headlessui";
     import { MoonIcon, SunIcon, ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon, UserIcon, DollarSignIcon, LogOutIcon, PlusSquareIcon, FolderPlusIcon, ZapIcon, LogInIcon } from 'svelte-feather-icons'
     import { onMount } from "svelte";
 
     // Auth
     
+    let AuthOpen = false
+    let AuthIndex = 0
+    let CurAuthIndex = AuthIndex
+        
     async function checkSession() {
         const { data, error } = await supabase.auth.getSession()
         if (data.session == null){
@@ -111,6 +117,41 @@
             si = -1
     }
 </script>
+
+<Dialog open={AuthOpen} on:close={()=> (AuthOpen = false)} as="div" class="fixed inset-0">
+    <DialogOverlay class="fixed inset-0 bg-black bg-opacity-25 z-0"/>
+    <div class="fixed inset-0 overflow-y-auto flex items-center justify-center pointer-events-none">
+        <div class=" bg-secondary-light dark:bg-secondary-dark pointer-events-auto rounded-md overflow-hidden" >
+            <DialogTitle class="px-4 py-2 text-center text-lg">
+                {#if CurAuthIndex == 0}
+                    Log In
+                {:else}
+                    Sign Up
+                {/if}
+            </DialogTitle>
+            <DialogDescription class="hidden" >
+                {#if CurAuthIndex == 0}
+                    Log in to an existing user.
+                {:else}
+                    Register a new user.
+                {/if}
+            </DialogDescription>
+            <TabGroup defaultIndex={AuthIndex} manual on:change={e => CurAuthIndex = e.detail}>
+                <TabList class="mx-4 text-sm space-x-4">
+                    <Tab class={`${CurAuthIndex == 0 ? "border-b-2 border-thirdary dark:border-white" : ""} `}>Log In</Tab>
+                    <Tab class={`${CurAuthIndex == 1 ? "border-b-2 border-thirdary dark:border-white" : ""} `}>Sign Up</Tab>
+                </TabList>
+                <div class="h-px mx-4 my-2 bg-thirdary" />
+                <TabPanels>
+                    <TabPanel><Login/></TabPanel>
+                    <TabPanel><Signup/></TabPanel>
+                </TabPanels>
+            </TabGroup>
+        </div>
+    </div>
+    
+</Dialog>
+
   
 <div class="relative box-border">
     <a href="#main" class="absolute left-5 top-5 -z-50 focus:z-50 bg-secondary-light dark:bg-secondary-dark text-black dark:text-white">
@@ -251,8 +292,8 @@
                 </PopoverPanel>
             </Popover>
         {:else if $signedIn == false}
-            <a href="/login" class="bg-primary-light dark:bg-primary-dark hover:bg-zinc-300 dark:hover:bg-zinc-800 border border-thirdary px-2 rounded-md mr-2" >Log In</a>
-            <a href="/signup" class="bg-primary-dark border border-thirdary px-2 rounded-md" >Sign Up</a>
+            <button on:click={()=> {AuthOpen = true; AuthIndex = 0; CurAuthIndex = 0}} class="bg-primary-light dark:bg-primary-dark hover:bg-zinc-300 dark:hover:bg-zinc-800 border border-thirdary px-2 rounded-md mr-2" >Log In</button>
+            <button on:click={()=> {AuthOpen = true; AuthIndex = 1; CurAuthIndex = 1}} class="bg-primary-light dark:bg-primary-dark hover:bg-zinc-300 dark:hover:bg-zinc-800 border border-thirdary px-2 rounded-md" >Sign Up</button>
             
             <Popover class="relative h-item">
                 <PopoverButton class="ml-2">
@@ -286,7 +327,7 @@
                 </PopoverPanel>
             </Popover>
         {:else}
-            AAAAAAAAAAAAAAAAAAAA
+            <span/>
         {/if}
         
     </header>

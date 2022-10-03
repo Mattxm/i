@@ -11,19 +11,27 @@
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
         if (data.session != null)
             signedIn.set(true)
+        else
+            alert(error?.message)
     }
 
 </script>
 
-<div class="max-w-xs">
-    <form autocomplete="off" class="flex flex-col bg-secondary-light dark:bg-secondary-dark p-4 rounded-md" on:submit|preventDefault={handleLogin}>
-        <label for="email">Email</label>
-        <input class="text-black dark:text-white bg-primary-light dark:bg-primary-dark rounded-sm border text-sm p-1 focus:border-highlight dark:focus:border-highlight border-white dark:border-primary-dark focus:outline-none autofill:border-none" 
-            name="email" type="email" bind:value={email}/>
-        <label for="password">Password</label>
-        <input class="text-black dark:text-white bg-primary-light dark:bg-primary-dark rounded-sm border text-sm p-1 focus:border-highlight dark:focus:border-highlight border-white dark:border-primary-dark focus:outline-none autofill:border-none" 
-            name="password" type="password" bind:value={password}/>
+<div class="max-w-xs w-screen">
+    <form autocomplete="off" class="flex flex-col bg-secondary-light dark:bg-secondary-dark px-4 pb-4 space-y-2" on:submit|preventDefault={handleLogin}>
+        <div>
+            <label for="email">Email</label>
+            <input class="focus:border-black dark:focus:border-white border-white dark:border-primary-dark w-full text-black dark:text-white bg-primary-light dark:bg-primary-dark focus:bg-white dark:focus:bg-black rounded-sm border text-sm p-1 focus:outline-none" 
+                name="email" type="email" bind:value={email}/>
+        </div>
         
-        <button type="submit" class={`${check ? "bg-highlight text-black" : " bg-primary-light dark:bg-primary-dark"} rounded-sm mt-2`}>Log In</button>
+        <div>
+            <label for="password">Password</label>
+            <input 
+            class="focus:border-black dark:focus:border-white border-white dark:border-primary-dark w-full text-black dark:text-white bg-primary-light dark:bg-primary-dark focus:bg-white dark:focus:bg-black rounded-sm border text-sm p-1 focus:outline-none" 
+            name="password" type="password" bind:value={password}/>    
+        </div>
+        
+        <button disabled={!check} type="submit" class={`${check ? "bg-highlight text-black" : " bg-primary-light dark:bg-primary-dark cursor-not-allowed"} rounded-sm leading-7 py-px`}>Log In</button>
     </form>
 </div>
