@@ -1,12 +1,12 @@
 <script lang="ts">
-    import "../app.css";
+    import "$lib/app.css";
     import { signedIn } from '$lib/userStore'
     import { supabase } from '$lib/supabaseClient'
     import Signup from "$lib/signup.svelte";
     import Login from "$lib/login.svelte";
 
     import { Popover, PopoverButton, PopoverPanel, Dialog, DialogOverlay, DialogDescription, DialogTitle, Tab, TabGroup, TabList, TabPanel, TabPanels } from "@rgossiaux/svelte-headlessui";
-    import { MoonIcon, SunIcon, ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon, UserIcon, DollarSignIcon, LogOutIcon, PlusSquareIcon, FolderPlusIcon, ZapIcon, LogInIcon } from 'svelte-feather-icons'
+    import { MoonIcon, SunIcon, ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon, UserIcon, DollarSignIcon, LogOutIcon, PlusSquareIcon, FolderPlusIcon, ZapIcon, LogInIcon, SearchIcon, PlusCircleIcon } from 'svelte-feather-icons'
     import { onMount } from "svelte";
 
     // Auth
@@ -93,9 +93,8 @@
     let search = "";
     let si = -1;
     let cslist = [
-        {text: "Search All"},
-        {text: "Search X"},
-        {text: "Search Y"},
+        {text: "Search Posts"},
+        {text: "Search Users"},
     ]
     let pslist = [
         {text: "Option 1"},
@@ -143,8 +142,8 @@
                 </TabList>
                 <div class="h-px mx-4 my-2 bg-thirdary" />
                 <TabPanels>
-                    <TabPanel><Login/></TabPanel>
-                    <TabPanel><Signup/></TabPanel>
+                    <TabPanel><Login on:connection={()=>{AuthOpen = false}} /></TabPanel>
+                    <TabPanel><Signup on:connection={()=>{AuthOpen = false}} /></TabPanel>
                 </TabPanels>
             </TabGroup>
         </div>
@@ -157,33 +156,44 @@
     <a href="#main" class="absolute left-5 top-5 -z-50 focus:z-50 bg-secondary-light dark:bg-secondary-dark text-black dark:text-white">
         Skip to main content
     </a>
-    <header class="flex p-4 bg-secondary-light dark:bg-secondary-dark text-black dark:text-white">
+    <header class="flex py-2 px-4 bg-secondary-light dark:bg-secondary-dark text-black dark:text-white">
         <div class="h-item">
             <!-- <img class="max-w-none" width="32" height="32" src="inv2.svg" alt="logo"> -->
-            <a href="/"><ZapIcon size="28" class="c-text"/></a>
+            <a class="flex items-center text-lg font-medium space-x-2" href="/" data-sveltekit-prefetch>
+                <ZapIcon size="28" class="c-text"/>
+                <span>INVOKE</span>
+            </a>
         </div>
-        <div class="h-item flex-auto">
-            <div role="search" class="h-item relative search-container focus-within:flex-1 transition-all duration-300 ease-linear">
-                <form class="w-full" on:submit|preventDefault={()=>{console.log(search);
-                }}>
-                    <label>
-                        <input size="20" class="peer w-full rounded-sm focus:bg-secondary-light dark:focus:bg-secondary-dark px-2 focus:outline-none bg-primary-light dark:bg-primary-dark border border-thirdary transition-transform ease-linear" 
-                        placeholder="Search" type="text" spellcheck="false" aria-haspopup="listbox" aria-activedescendant="selected" aria-autocomplete="list" aria-owns="searchbox"
+        <div class="h-item flex-1 justify-center">
+            <form class="flex w-full h-full max-w-sm" on:submit|preventDefault={()=>{console.log(search);}}>
+                <div class="flex flex-1 relative items-center focus-within:bg-secondary-light dark:focus-within:bg-secondary-dark px-2 bg-primary-light dark:bg-primary-dark border border-thirdary">
+                        <label hidden for="searchbar">search bar</label>
+                        <input size="20" class="peer h-full flex-1 bg-inherit focus:outline-none" 
+                        placeholder="Search" name="searchbar" type="text" spellcheck="false" aria-haspopup="listbox" aria-activedescendant="selected" aria-autocomplete="list" aria-owns="searchbox"
                         bind:value={search}
                         on:keydown={(e)=>{sbkb(e)}}
                         on:focusout={()=>{si = -1}}
                         on:focus={()=>{if (search.replace(/\s/g, "") !== "") si = 0}}
                         on:input={(e)=>{sbci(e)}}
                         />
-                        
-                        <ul role="listbox" id="searchbox" class="menu left-0 right-0 absolute invisible peer-focus:visible">
+                        {#if search}
+                            <button on:click={()=>{search = ""}}>
+                                <XIcon size="20"/>
+                            </button> 
+                        {/if}
+                           
+                        <ul role="listbox" id="searchbox" class="menu -left-px top-full -right-px absolute invisible peer-focus:visible">
                             {#each slist as slitem, i}
                                 <li on:mouseenter={()=>{si = i}} role="option" aria-selected={si == i} class="aria-selected:bg-red-400 m-item">{slitem.text}</li>
                             {/each}
-                        </ul>    
-                    </label>
-                </form>
-            </div>
+                        </ul>
+                </div>
+                <button class="px-2 bg-thirdary hover:bg-neutral-700">
+                    <SearchIcon size="18"/>
+                </button>
+
+            </form>
+
             <!-- <nav class="h-item space-x-4">
                 <a class="c-text" href="/" >Information</a>
                 <a class="c-text" href="/" >Listings</a>
@@ -193,9 +203,8 @@
 
         {#if $signedIn == true}
             <Popover class="relative h-item">
-                <PopoverButton class="c-text flex items-center bg-green-400 focus:bg-green-500 hover:bg-green-500 px-2 rounded-sm">
-                    new
-                    <ChevronDownIcon size="15" class="ml-1"/>
+                <PopoverButton class="c-text flex items-center bg-green-400 focus:bg-green-500 hover:bg-green-500 p-0.5 rounded-md">
+                    <PlusSquareIcon/>
                 </PopoverButton>
                 <PopoverPanel class="absolute right-0 top-8 flex flex-col menu max-w-xxs w-screen">
                     <a href="/" class="m-item">
@@ -320,10 +329,10 @@
 
                     <span class="h-px my-1 bg-thirdary" />
 
-                    <a href="/login" class="m-item">
+                    <button on:click={()=> {AuthOpen = true; AuthIndex = 0; CurAuthIndex = 0}} class="m-item">
                         <LogInIcon size="15"/>
                         <span class="pl-2">Log In</span>
-                    </a>
+                    </button>
                 </PopoverPanel>
             </Popover>
         {:else}
@@ -336,10 +345,3 @@
   
 
 <slot />
-
-<style>
-    .search-container{
-        min-width: 15rem;
-        max-width: 30rem;
-    }
-</style>

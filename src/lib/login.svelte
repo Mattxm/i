@@ -1,28 +1,42 @@
 <script lang="ts">
     import { supabase } from "$lib/supabaseClient"
     import { signedIn } from "$lib/userStore"
+    import { createEventDispatcher } from "svelte"
+    import { AlertCircleIcon, CheckCircleIcon, MinusCircleIcon } from "svelte-feather-icons";
     
+    const dispatch = createEventDispatcher()
+
     let email = ""
     let password = ""
 
     $: check = ((password.length > 0) && (email.length > 0)) 
 
+    let errormsg = ""
+
     const handleLogin = async () => {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-        if (data.session != null)
+        if (data.session != null){
             signedIn.set(true)
+            dispatch('connection')
+        }
         else
-            alert(error?.message)
+            errormsg = error?.message ? error.message : ""
     }
 
 </script>
 
 <div class="max-w-xs w-screen">
+    {#if (errormsg.length > 0)}
+        <div on:click={()=>{errormsg = ""}} class="relative border-red-500 border mx-4 rounded-sm p-2 flex space-x-2 my-1" >
+            <AlertCircleIcon class="text-red-500"/>
+            <p class="text-sm" >{errormsg}.</p>
+        </div>
+    {/if}
     <form autocomplete="off" class="flex flex-col bg-secondary-light dark:bg-secondary-dark px-4 pb-4 space-y-2" on:submit|preventDefault={handleLogin}>
         <div>
             <label for="email">Email</label>
             <input class="focus:border-black dark:focus:border-white border-white dark:border-primary-dark w-full text-black dark:text-white bg-primary-light dark:bg-primary-dark focus:bg-white dark:focus:bg-black rounded-sm border text-sm p-1 focus:outline-none" 
-                name="email" type="email" bind:value={email}/>
+                name="email" type="text" bind:value={email}/>
         </div>
         
         <div>

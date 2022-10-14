@@ -1,15 +1,17 @@
 <script>
     import { supabase } from "$lib/supabaseClient"
     import { signedIn } from "$lib/userStore";
-    import { onMount } from "svelte";
+    import { onMount, createEventDispatcher } from "svelte";
     import { AlertCircleIcon, CheckCircleIcon, MinusCircleIcon } from "svelte-feather-icons";
+
+    const dispatch = createEventDispatcher()
 
     let email = ""
     let password = ""
     let confirmpassword = ""
     let username = ""
 
-    let regex = new RegExp("^[^@\s]+@[^@\s]+\.[^@\s]+$");
+    let regex = new RegExp("^[^@]+@[^@]+\.[^@]+$");
     let regex2 = new RegExp("^[a-zA-Z0-9]([_-](?![_-])|[a-zA-Z0-9]){1,22}[a-zA-Z0-9]$")
     
     $: einvalid = !regex.test(email) && interaction[0]
@@ -20,6 +22,8 @@
 
     let interaction = [false, false, false, false]
 
+    let errormsg = ""
+
     async function signUpWithEmail(){
         const { data, error } = await supabase.auth.signUp({
             email: email,
@@ -28,15 +32,20 @@
         })
         if (data.session){
             signedIn.set(true)
-            window.location.replace("/")
+            dispatch('connection')
         }
         else
-            alert(error?.message)
+            errormsg = error?.message ? error.message : ""
     }
-    
 </script>
 
 <div class="max-w-xs w-screen">
+    {#if (errormsg.length > 0)}
+        <div on:click={()=>{errormsg = ""}} class="relative border-red-500 border mx-4 rounded-sm p-2 flex space-x-2 my-1" >
+            <AlertCircleIcon class="text-red-500"/>
+            <p class="text-sm" >{errormsg}.</p>
+        </div>
+    {/if}
     <form on:submit|preventDefault={signUpWithEmail} class="flex flex-col bg-secondary-light dark:bg-secondary-dark px-4 pb-4 space-y-2">
         <div>
             <div class="flex items-center">
