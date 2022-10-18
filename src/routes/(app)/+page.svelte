@@ -4,14 +4,11 @@
     import { signedIn } from '$lib/userStore'
     import { supabase } from '$lib/supabaseClient'
     import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon, ChevronRightIcon, ChevronLeftIcon, ChevronsLeftIcon, ChevronsRightIcon, CheckIcon, FilterIcon, SlidersIcon } from "svelte-feather-icons";
-  import { each } from "svelte/internal";
 
 
     let sortNew = true
-
     export let data
     const { posts } = data
-    
     function timeBetween(date){
         let sec = Math.floor((new Date() - new Date(date)) / 1000)
         let interval = Math.floor(sec / 31536000)
@@ -37,14 +34,6 @@
         return `just now`
     }
 
-    const DateOptions = [
-        "All",
-        "Today",
-        "This Week",
-        "This Month"
-    ]
-    let SelectedDateOption = DateOptions[0]
-
 </script>
 
 <svelte:head>
@@ -54,52 +43,6 @@
 </svelte:head>
 
 <div id="main" class="min-h-screen w-full bg-primary-light dark:bg-primary-dark text-black dark:text-white flex">
-    <div class="dark:bg-zinc-800 w-48 bg-zinc-200 flex flex-col p-2 space-y-2 border-r border-thirdary">
-        <span class="flex items-center">
-            <SlidersIcon size="20"/>
-            <span class=" text-lg" >Filters</span>
-        </span>
-        <button on:click={()=>{sortNew = !sortNew}} class="flex justify-center items-center w-16 bg-zinc-100 dark:bg-zinc-700 rounded-md py-1 text-sm" >
-            {#if sortNew}
-                NEW
-                <ArrowUpIcon size="16" />
-            {:else}
-                OLD
-                <ArrowDownIcon size="16" />
-            {/if}
-        </button>
-        <input class="rounded-sm p-1"/>
-        <div class="flex flex-col">
-            <span>POST DATE </span>
-            <span class="h-px my-1 bg-thirdary" />
-            <Listbox value={SelectedDateOption} on:change={(e)=>{SelectedDateOption = e.detail}} let:open 
-                class="relative"
-                >
-                <ListboxButton class="flex w-full text-left">
-                    <span class="flex-1">{SelectedDateOption}</span>
-                    <ChevronDownIcon />
-                </ListboxButton>
-                {#if open}
-                    <div class="absolute right-0 left-0 bg-gray-400">
-                        <ListboxOptions static class="menu" >
-                            {#each DateOptions as DateOption}
-                                <ListboxOption value={DateOption} let:active let:selected>
-                                    <span class={`${active ? "bg-red-400" : " " } ${selected ? " bg-red-500 " : " "} flex items-center px-2`} >
-                                        <span class="flex-1">{DateOption}</span>
-                                        {#if selected}
-                                            <CheckIcon size="20"/>
-                                        {/if}
-                                        
-                                    </span>
-                                </ListboxOption>
-                            {/each}
-                        </ListboxOptions>
-                    </div>
-                {/if}
-            </Listbox>
-        </div>
-        
-    </div>
     <ul class="flex-1">
         <!-- <span class="flex items-center justify-center bg-zinc-800">
             <button class=" hover:bg-zinc-800 rounded-full transition-colors w-6 h-6 p-px flex justify-center items-center">
@@ -119,7 +62,7 @@
         </span> -->
         {#if posts != null}
             {#each posts as post}
-                <li class="flex flex-col bg-zinc-100 dark:bg-zinc-800 p-2 border-thirdary border-b" >
+                <li class="flex flex-col bg-zinc-100 dark:bg-zinc-800 py-2 px-4 border-thirdary border-b" >
                     <span class="flex w-full">
                         <div class="flex-1">
                             <span>{post.title}</span>

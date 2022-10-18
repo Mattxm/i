@@ -36,14 +36,14 @@
         <div>
             <label for="email">Email</label>
             <input class="focus:border-black dark:focus:border-white border-white dark:border-primary-dark w-full text-black dark:text-white bg-primary-light dark:bg-primary-dark focus:bg-white dark:focus:bg-black rounded-sm border text-sm p-1 focus:outline-none" 
-                name="email" type="text" bind:value={email}/>
+                autocomplete="email" name="email" type="text" bind:value={email}/>
         </div>
         
         <div>
             <label for="password">Password</label>
             <input 
             class="focus:border-black dark:focus:border-white border-white dark:border-primary-dark w-full text-black dark:text-white bg-primary-light dark:bg-primary-dark focus:bg-white dark:focus:bg-black rounded-sm border text-sm p-1 focus:outline-none" 
-            name="password" type="password" bind:value={password}/>    
+            autocomplete="current-password" name="password" type="password" bind:value={password}/>    
         </div>
         
         <button disabled={!check} type="submit" class={`${check ? "bg-highlight text-black" : " bg-primary-light dark:bg-primary-dark cursor-not-allowed"} rounded-sm leading-7 py-px`}>Log In</button>

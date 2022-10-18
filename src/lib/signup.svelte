@@ -57,7 +57,7 @@
                     <CheckCircleIcon class="text-green-500" size="16" />
                 {/if}
             </div>
-            <input required maxlength="128" bind:value={email} type="text" name="email" autocomplete="false" spellcheck="false" on:input={()=>{interaction[0] = true}}
+            <input required maxlength="128" bind:value={email} type="text" name="email" autocomplete="email" spellcheck="false" on:input={()=>{interaction[0] = true}}
             class={`${einvalid ? "border-red-500" : "focus:border-black dark:focus:border-white border-white dark:border-primary-dark"} w-full text-black dark:text-white bg-primary-light dark:bg-primary-dark focus:bg-white dark:focus:bg-black rounded-sm border text-sm p-1 focus:outline-none`}
             /> 
             <div class={`${einvalid ? " max-h-12" : "max-h-0"} transition-all text-red-500 items-center text-xs overflow-hidden`} >
@@ -75,7 +75,7 @@
                     <CheckCircleIcon class="text-green-500" size="16" />
                 {/if}
             </div>
-            <input required maxlength="24" bind:value={username} type="text" name="username" autocomplete="false" spellcheck="false" on:input={()=>{interaction[1] = true}}
+            <input required maxlength="24" bind:value={username} type="text" name="username" autocomplete="off" spellcheck="false" on:input={()=>{interaction[1] = true}}
             class={`${uinvalid ? "border-red-500" : "focus:border-black dark:focus:border-white border-white dark:border-primary-dark"} w-full text-black dark:text-white bg-primary-light dark:bg-primary-dark focus:bg-white dark:focus:bg-black rounded-sm border text-sm p-1 focus:outline-none`}
             /> 
             <div class={`${uinvalid ? " max-h-12" : "max-h-0"} transition-all text-red-500 items-center text-xs overflow-hidden`} >
@@ -98,7 +98,7 @@
                     <CheckCircleIcon class="text-green-500" size="16" />
                 {/if}
             </div>
-            <input required maxlength="24" bind:value={password} type="password" name="password" autocomplete="false" spellcheck="false" on:input={()=>{interaction[2] = true}}
+            <input required maxlength="24" bind:value={password} type="password" name="password" autocomplete="new-password" spellcheck="false" on:input={()=>{interaction[2] = true}}
             class={`${pwlength ? "border-red-500" : "focus:border-black dark:focus:border-white border-white dark:border-primary-dark"} w-full text-black dark:text-white bg-primary-light dark:bg-primary-dark focus:bg-white dark:focus:bg-black rounded-sm border text-sm p-1 focus:outline-none`}
             /> 
             <div class={`${pwlength ? " max-h-12" : "max-h-0"} transition-all text-red-500 items-center text-xs overflow-hidden`} >
@@ -116,7 +116,7 @@
                     <CheckCircleIcon class="text-green-500" size="16" />
                 {/if}
             </div>
-            <input required maxlength="24" bind:value={confirmpassword} type="password" name="confirmpassword" autocomplete="false" spellcheck="false" on:input={()=>{interaction[3] = true}}
+            <input required maxlength="24" bind:value={confirmpassword} type="password" name="confirmpassword" autocomplete="new-password" spellcheck="false" on:input={()=>{interaction[3] = true}}
             class={`${pwmatch ? "border-red-500" : "focus:border-black dark:focus:border-white border-white dark:border-primary-dark"} w-full text-black dark:text-white bg-primary-light dark:bg-primary-dark focus:bg-white dark:focus:bg-black rounded-sm border text-sm p-1 focus:outline-none`}
             /> 
             <div class={`${pwmatch ? " max-h-12" : "max-h-0"} transition-all text-red-500 items-center text-xs overflow-hidden`} >
