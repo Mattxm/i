@@ -6,7 +6,7 @@ export const load = async () => {
 
     let { data: posts, error } = await supabase
     .from('posts')
-    .select(`*, profiles(*)`)
+    .select(`*, profiles(*), comments(count)`)
 
     console.log(error);
     console.log(posts);

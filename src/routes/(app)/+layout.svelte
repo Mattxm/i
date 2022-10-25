@@ -6,8 +6,8 @@
     import Login from "$lib/login.svelte";
 
     import { Listbox, ListboxButton, ListboxOptions, ListboxOption, Popover, PopoverButton, PopoverPanel, Dialog, DialogOverlay, DialogDescription, DialogTitle, Tab, TabGroup, TabList, TabPanel, TabPanels } from "@rgossiaux/svelte-headlessui";
-    import {  CheckIcon, MoonIcon, SunIcon, ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon, UserIcon, DollarSignIcon, LogOutIcon, PlusSquareIcon, FolderPlusIcon, ZapIcon, LogInIcon, SearchIcon, PlusCircleIcon, InfoIcon, PlusIcon, ArrowLeftIcon } from 'svelte-feather-icons'
-    import { onMount } from "svelte";
+    import {  CheckIcon, MoonIcon, SunIcon, ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon, UserIcon, DollarSignIcon, LogOutIcon, PlusSquareIcon, FolderPlusIcon, ZapIcon, LogInIcon, SearchIcon, PlusCircleIcon, InfoIcon, PlusIcon, ArrowLeftIcon, ChevronUpIcon } from 'svelte-feather-icons'
+    import { onMount, tick } from "svelte";
 
 
     // Search Options
@@ -28,7 +28,7 @@
     ]
     let SelectedSortOption = SortOptions[0]
 
-    let AdditionalTags = ["Example Tag"]
+    let AdditionalTags: string[] = []
     let NewTag = ""
 
     // Auth
@@ -113,6 +113,7 @@
 
     // Search bar 
     let ShowSearch = false
+    let MobileSearch: HTMLElement;
     let search = "";
     let si = -1;
     let cslist = [
@@ -138,6 +139,13 @@
         else
             si = -1
     }
+    async function ShowMobileSearch(){
+        ShowSearch = !ShowSearch; 
+        console.log(MobileSearch); 
+        await tick(); 
+        MobileSearch.focus()
+    }
+
 </script>
 
 <Dialog open={AuthOpen} on:close={()=> (AuthOpen = false)} as="div" class="fixed inset-0">
@@ -180,7 +188,7 @@
         Skip to main content
     </a>
     <header class="relative grid grid-cols-1 py-2 px-4 bg-secondary-light dark:bg-secondary-dark text-black dark:text-white">
-        <div class="flex w-full">
+        <div class={`${ShowSearch ? "hidden" : "flex"} xs:flex w-full h-7`}>
             <div class="h-item">
                 <!-- <img class="max-w-none" width="32" height="32" src="inv2.svg" alt="logo"> -->
                 <a class="flex items-center text-lg font-medium space-x-2" href="/" data-sveltekit-prefetch>
@@ -193,7 +201,7 @@
                     <form class="flex w-full h-full max-w-sm" on:submit|preventDefault={()=>{console.log(search);}}>
                         <div class="flex flex-1 relative items-center focus-within:bg-secondary-light dark:focus-within:bg-secondary-dark px-2 bg-primary-light dark:bg-primary-dark border border-thirdary">
                             <label hidden for="searchbar">search bar</label>
-                            <input size="20" class="peer h-full flex-1 bg-inherit focus:outline-none" 
+                            <input size="16" class="peer h-full flex-1 bg-inherit focus:outline-none" 
                             placeholder="Search" name="searchbar" type="text" spellcheck="false" aria-haspopup="listbox" aria-activedescendant="selected" aria-autocomplete="list" aria-owns="searchbox" autocomplete="off"
                             bind:value={search}
                             on:keydown={(e)=>{sbkb(e)}}
@@ -211,7 +219,7 @@
                                 <SlidersIcon size="16" />
                             </button>
                                 
-                            <ul role="listbox" id="searchbox" class="menu -left-px top-full -right-px absolute invisible peer-focus:visible">
+                            <ul role="listbox" id="searchbox" class="menu z-10 -left-px top-full -right-px absolute invisible peer-focus:visible">
                                 {#each slist as slitem, i}
                                     <li on:mouseenter={()=>{si = i}} role="option" aria-selected={si == i} class="aria-selected:bg-red-400 m-item">{slitem.text}</li>
                                 {/each}
@@ -229,38 +237,40 @@
                     <a class="c-text" href="/" >Services</a>
                 </nav> -->
             </div>
+            <div class="h-item mr-4 xs:hidden">
+                <button on:click={()=>{ShowMobileSearch()}}>
+                    <SearchIcon class="c-text" size="20"/>
+                </button>
+            </div>
             <div class="h-item space-x-4">
-                    <button on:click={()=>{ShowSearch = !ShowSearch}} class="h-7 xs:hidden">
-                        <SearchIcon class="c-text" size="20"/>
-                    </button>
                 {#if $signedIn == true}
                     <Popover class="relative items-center justify-center flex">
                         <PopoverButton class="h-7 items-center hover:bg-green-400 p-0.5 rounded-md transition-colors">
                             <PlusSquareIcon/>
                         </PopoverButton>
-                        <PopoverPanel class="absolute right-0 top-8 flex flex-col menu max-w-xxs w-screen">
-                            <a href="/" class="m-item">
+                        <PopoverPanel class="absolute right-0 top-8 z-10 flex flex-col menu max-w-xxs w-screen">
+                            <a href="/create" class="m-item">
                                 <PlusSquareIcon size="15"/>
                                 <span class="pl-2">New Post</span>
                             </a>
-                            <a href="/" class="m-item">
+                            <!-- <a href="/" class="m-item">
                                 <FolderPlusIcon size="15"/>
                                 <span class="pl-2">New Collection</span>
-                            </a>
+                            </a> -->
                             </PopoverPanel>
                     </Popover>
                     <Popover class="relative items-center justify-center flex">
                         <PopoverButton class="h-7">
                             <BellIcon class="c-text" size="20"/>
-                            <span class={`${notifications > 0 ? "visible" : "hidden"} absolute text-xs px-1 -top-1.5 -right-0.5 bg-red-400 rounded-full`}>{notifications}</span>
+                            <span class={`${notifications > 0 ? "visible" : "hidden"} absolute text-xs px-1 -top-1 -right-1 bg-red-400 rounded-full`}>{notifications}</span>
                         </PopoverButton>
                     
-                        <PopoverPanel class="menu absolute right-0 top-8 w-screen max-w-xs">
+                        <PopoverPanel class="menu absolute right-0 top-8 z-10 w-screen max-w-xs">
                             <div class="flex px-4 items-center">
                                 <span class="c-text flex-1"><a href="/notifications">Notifications</a></span>
                                 <a href="/" class="c-text"><SettingsIcon size="20"/></a>
                             </div>
-                            <span class="h-px my-1 bg-thirdary" />
+                            <div class="h-px my-1 bg-thirdary mb-1" />
                             {#if notifications == 0}
                                 <span class="px-4">No new notifactions</span>
                                 
@@ -277,14 +287,14 @@
                         </PopoverPanel>
                     </Popover>
                 {:else if $signedIn == false}
-                    <button on:click={()=> {AuthOpen = true; AuthIndex = 0; CurAuthIndex = 0}} class="bg-primary-light dark:bg-primary-dark hover:bg-zinc-300 dark:hover:bg-zinc-800 border border-thirdary px-2 rounded-md" >Log In</button>
-                    <button on:click={()=> {AuthOpen = true; AuthIndex = 1; CurAuthIndex = 1}} class="bg-primary-light dark:bg-primary-dark hover:bg-zinc-300 dark:hover:bg-zinc-800 border border-thirdary px-2 rounded-md" >Sign Up</button>
+                    <button on:click={()=> {AuthOpen = true; AuthIndex = 0; CurAuthIndex = 0}} class="bg-primary-light dark:bg-primary-dark hover:bg-zinc-300 dark:hover:bg-zinc-800 border border-thirdary px-2 rounded-sm" >Log In</button>
+                    <button on:click={()=> {AuthOpen = true; AuthIndex = 1; CurAuthIndex = 1}} class="bg-primary-light dark:bg-primary-dark hover:bg-zinc-300 dark:hover:bg-zinc-800 border border-thirdary px-2 rounded-sm" >Sign Up</button>
                 {/if}
                 <Popover class="relative items-center justify-center flex">
                     <PopoverButton>
                         <div class=" rounded-full bg-white h-7 w-7 border border-thirdary"/>
                     </PopoverButton>
-                    <PopoverPanel on:mousemove={()=>{}} class="absolute right-0 top-8 flex flex-col menu max-w-xxs w-screen leading-8">
+                    <PopoverPanel on:mousemove={()=>{}} class="absolute right-0 top-8 z-10 flex flex-col menu max-w-xxs w-screen leading-8">
                         {#if $signedIn == true}
                             <a href="/profile" class="m-item">
                                 <UserIcon size="15"/>
@@ -345,14 +355,14 @@
                 </Popover>
             </div>
         </div>
-        <form class={`${ShowSearch ? "" : "hidden"} absolute top-0 right-0 py-2 px-4 bg-secondary-dark xs:hidden flex w-full`} on:submit|preventDefault={()=>{console.log(search);}}>
+        <form class={`${ShowSearch ? "" : "hidden"} bg-secondary-dark xs:hidden flex h-7 w-full`} on:submit|preventDefault={()=>{console.log(search);}}>
             <button on:click={()=>{ShowSearch = false; OptionsVisible = false}} class="pr-2 c-text">
                 <ArrowLeftIcon />
             </button>
             <div class="flex flex-1 relative items-center focus-within:bg-secondary-light dark:focus-within:bg-secondary-dark px-2 bg-primary-light dark:bg-primary-dark border border-thirdary">
 
                 <label hidden for="searchbar">search bar</label>
-                <input size="20" class="peer h-8 flex-1 bg-inherit focus:outline-none" 
+                <input bind:this={MobileSearch} size="20" class="peer h-full flex-1 bg-inherit focus:outline-none" 
                 placeholder="Search" name="searchbar" type="text" spellcheck="false" aria-haspopup="listbox" aria-activedescendant="selected" aria-autocomplete="list" aria-owns="searchbox" autocomplete="off"
                 bind:value={search}
                 on:keydown={(e)=>{sbkb(e)}}
@@ -370,7 +380,7 @@
                     <SlidersIcon size="16" />
                 </button>
                     
-                <ul role="listbox" id="searchbox" class="menu -left-px top-full -right-px absolute invisible peer-focus:visible">
+                <ul role="listbox" id="searchbox" class="menu z-10 -left-px top-full -right-px absolute invisible peer-focus:visible">
                     {#each slist as slitem, i}
                         <li on:mouseenter={()=>{si = i}} role="option" aria-selected={si == i} class="aria-selected:bg-red-400 m-item">{slitem.text}</li>
                     {/each}
@@ -381,14 +391,14 @@
             </button>
 
         </form>
-        <div class={`${OptionsVisible ? "flex" : "hidden"} justify-center border-t border-thirdary pt-2 mt-2`}>
-            <div class="flex xs:w-auto w-full xs:flex-row flex-col xs:space-y-0 space-y-6 xs:space-x-8">
+        <div class={`${OptionsVisible ? "flex" : "hidden"} relative justify-center border-t border-thirdary pt-2 mt-2`}>
+            <div class="flex md:w-auto w-full md:flex-row flex-col md:space-y-0 space-y-6 md:space-x-8">
                 <div class="flex flex-col">
                     <span>POST DATE</span>
                     <span class="h-px my-1 bg-thirdary" />
                     <Listbox id="DateOptions" value={SelectedDateOption} on:change={(e)=>{SelectedDateOption = e.detail}} let:open 
                         class="relative">
-                        <ListboxButton class="c-text flex text-left xs:w-32 w-full">
+                        <ListboxButton class="c-text flex text-left md:w-32 w-full">
                             <span class="flex-1">{SelectedDateOption}</span>
                             <ChevronDownIcon />
                         </ListboxButton>
@@ -416,7 +426,7 @@
                     <span class="h-px my-1 bg-thirdary" />
                     <Listbox id="SortOptions" value={SelectedSortOption} on:change={(e)=>{SelectedSortOption = e.detail}} let:open 
                         class="relative">
-                        <ListboxButton class="c-text flex text-left xs:w-32 w-full">
+                        <ListboxButton class="c-text flex text-left md:w-32 w-full">
                             <span class="flex-1">{SelectedSortOption}</span>
                             <ChevronDownIcon />
                         </ListboxButton>
@@ -451,7 +461,7 @@
                         <span class="h-px my-1 bg-thirdary"/>
                     </div>
                     
-                    <div class="flex flex-wrap items-start w-full xs:h-6 xs:w-48 overflow-y-auto">
+                    <div class="flex flex-wrap items-start w-full md:h-6 md:w-48 overflow-y-auto">
                         {#each AdditionalTags as Tag}
                             <button class="c-text hover:bg-green-600 hover:line-through flex items-center text-sm px-2 bg-green-400 rounded-md space-x-2 overflow-x-clip whitespace-nowrap mb-1 mr-1" on:click={()=> AdditionalTags = AdditionalTags.filter(t => t != Tag)}>
                                 <span>{Tag}</span>
@@ -466,18 +476,18 @@
                     </span>
                     <span class="h-px my-1 bg-thirdary" />
                     <div class="flex bg-primary-dark items-center">
-                        <input bind:value={NewTag} id="TagOptions" name="TagOptions" autocomplete="off" type="text" class="bg-inherit px-1 xs:w-40 w-full outline-none" >
+                        <input bind:value={NewTag} id="TagOptions" name="TagOptions" autocomplete="off" type="text" class="bg-inherit px-1 md:w-40 w-full outline-none" >
                         <button type="submit" class="px-1">
                             <PlusIcon class="c-text" size="20"/>
                         </button>
                     </div>
                 </form>
+                <button class="flex justify-center c-text md:hidden hover:bg-zinc-800 bg-primary-dark rounded-sm py-px border border-thirdary">
+                    <span>Search</span>
+                </button>
                 
             </div>
         </div>
     </header>
 </div>
-
-  
-
-<slot />
+<slot/>

@@ -13,10 +13,46 @@
         @apply px-2 rounded-sm flex items-center hover:bg-red-400
     }
     .c-text {
-        @apply text-black dark:text-white group-hover:text-zinc-900 dark:group-hover:text-white hover:text-zinc-900 dark:hover:text-zinc-200 aria-selected:bg-zinc-900 dark:aria-selected:text-zinc-200
+        @apply text-black dark:text-white group-hover:text-neutral-900 dark:group-hover:text-white hover:text-neutral-900 dark:hover:text-neutral-200 aria-selected:bg-neutral-900 dark:aria-selected:text-neutral-200
+    }
+    .secondary-text {
+        @apply text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white
     }
     .generic {
         @apply text-black dark:text-white bg-primary-light dark:bg-primary-dark
+    }
+
+    .markdown a{
+        @apply text-blue-400
+    }
+
+    .markdown ol{
+        @apply list-decimal ml-8 p-0
+    }
+
+    .markdown ul{
+        list-style-type: circle;
+        @apply  ml-8 p-0
+    }
+    
+    .markdown li{
+        @apply m-0 p-0
+    }
+
+    .markdown h1{
+        @apply text-2xl
+    }
+    
+    .markdown h2{
+        @apply text-xl
+    }
+    
+    .markdown h3{
+        @apply text-lg
+    }
+    
+    .markdown blockquote{
+        @apply mx-2 px-2 border-l-2 border-neutral-800 dark:border-neutral-500 text-neutral-800 dark:text-neutral-300
     }
 }
 @layer base{
@@ -31,10 +67,11 @@
         @apply bg-secondary-light dark:bg-secondary-dark
     }
     ::-webkit-scrollbar-thumb {
-        @apply dark:bg-zinc-400 bg-primary-dark rounded-full border-solid border-2 border-secondary-light dark:border-secondary-dark hover:bg-thirdary dark:hover:bg-thirdary
+        @apply dark:bg-neutral-400 bg-primary-dark border-solid border-2 border-secondary-light dark:border-secondary-dark hover:bg-thirdary dark:hover:bg-thirdary
     }
 }
 
 *{
    font-family: 'Roboto', sans-serif; 
 }
+
