@@ -1,5 +1,5 @@
 <script>
-    import { supabase } from "$lib/supabaseClient"
+    import { supabase, signUpWithEmail } from "$lib/supabaseClient"
     import { signedIn } from "$lib/userStore";
     import { onMount, createEventDispatcher } from "svelte";
     import { AlertCircleIcon, CheckCircleIcon, MinusCircleIcon } from "svelte-feather-icons";
@@ -24,19 +24,15 @@
 
     let errormsg = ""
 
-    async function signUpWithEmail(){
-        const { data, error } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-            options: {data: {username: username}}
-        })
-        if (data.session){
-            signedIn.set(true)
+    async function signUp(){
+        let {success, error} = await signUpWithEmail(email, password, username)
+        if (success)
             dispatch('connection')
-        }
         else
-            errormsg = error?.message ? error.message : ""
+            errormsg = error ? error : ""
     }
+    
+
 </script>
 
 <div class="max-w-xs w-screen">
@@ -46,7 +42,7 @@
             <p class="text-sm" >{errormsg}.</p>
         </div>
     {/if}
-    <form on:submit|preventDefault={signUpWithEmail} class="flex flex-col bg-secondary-light dark:bg-secondary-dark px-4 pb-4 space-y-2">
+    <form on:submit|preventDefault={signUp} class="flex flex-col bg-secondary-light dark:bg-secondary-dark px-4 pb-4 space-y-2">
         <div>
             <div class="flex items-center">
                 <label for="email">Email</label>
@@ -71,8 +67,6 @@
                 <span class="flex-1"/>
                 {#if uinvalid}
                     <MinusCircleIcon class="text-red-500" size="16" />
-                {:else if !uinvalid && interaction[1]}
-                    <CheckCircleIcon class="text-green-500" size="16" />
                 {/if}
             </div>
             <input required maxlength="24" bind:value={username} type="text" name="username" autocomplete="off" spellcheck="false" on:input={()=>{interaction[1] = true}}

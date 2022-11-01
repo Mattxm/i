@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { supabase } from "$lib/supabaseClient"
+    import { supabase, signInWithEmail } from "$lib/supabaseClient"
     import { signedIn } from "$lib/userStore"
     import { createEventDispatcher } from "svelte"
     import { AlertCircleIcon, CheckCircleIcon, MinusCircleIcon } from "svelte-feather-icons";
@@ -13,14 +13,12 @@
 
     let errormsg = ""
 
-    const handleLogin = async () => {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-        if (data.session != null){
-            signedIn.set(true)
+    async function handleLogin(){
+        let {success, error} = await signInWithEmail(email, password)
+        if (success)
             dispatch('connection')
-        }
         else
-            errormsg = error?.message ? error.message : ""
+            errormsg = error ? error : ""
     }
 
 </script>
