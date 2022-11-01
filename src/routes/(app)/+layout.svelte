@@ -1,6 +1,6 @@
 <script lang="ts">
     import "$lib/app.css";
-    import { signedIn } from '$lib/userStore'
+    import { signedIn, currentUser } from '$lib/userStore'
     import { supabase } from '$lib/supabaseClient'
     import Signup from "$lib/signup.svelte";
     import Login from "$lib/login.svelte";
@@ -9,27 +9,28 @@
     import {  CheckIcon, MoonIcon, SunIcon, ChevronDownIcon, BellIcon, Minimize2Icon, TargetIcon, SettingsIcon, XIcon, SlidersIcon, UserIcon, DollarSignIcon, LogOutIcon, PlusSquareIcon, FolderPlusIcon, ZapIcon, LogInIcon, SearchIcon, PlusCircleIcon, InfoIcon, PlusIcon, ArrowLeftIcon, ChevronUpIcon } from 'svelte-feather-icons'
     import { onMount, tick } from "svelte";
 
+    onMount(()=>{
+        currentUser.reset()
+        signedIn.reset()
+        if (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches){
+            userTheme = Theme.System
+            darktheme = true
+        }
+        else{
+            userTheme = Theme.System
+            darktheme = false
+        }
+        if (localStorage.theme === "dark") {
+            userTheme = Theme.Dark
+            darktheme = true
+        } 
+        if (localStorage.theme === "light") {
+            userTheme = Theme.Light
+            darktheme = false
+        }        
+    })
 
-    // Search Options
-    let OptionsVisible = false
-
-    const DateOptions = [
-        "All",
-        "Today",
-        "This Week",
-        "This Month"
-    ]
-    let SelectedDateOption = DateOptions[0]
-
-    const SortOptions = [
-        "Post Date",
-        "Comments",
-        "Rating",
-    ]
-    let SelectedSortOption = SortOptions[0]
-
-    let AdditionalTags: string[] = []
-    let NewTag = ""
+    
 
     // Auth
     
@@ -37,16 +38,6 @@
     let AuthIndex = 0
     let CurAuthIndex = AuthIndex
         
-    async function checkSession() {
-        const { data, error } = await supabase.auth.getSession()
-        if (data.session == null){
-            signedIn.set(false)
-        }
-        else{
-            signedIn.set(true) 
-        }
-                     
-    }
     async function signOut() {
         const { error } = await supabase.auth.signOut()
         if (error) throw error
@@ -55,7 +46,7 @@
     }
 
 
-    // User    
+    // Theme   
     enum Theme { System = 1, Light, Dark}
     let darktheme = false
     let userTheme = Theme.System
@@ -85,25 +76,7 @@
                 break
         }
     }
-    onMount(()=>{
-        checkSession()
-        if (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches){
-            userTheme = Theme.System
-            darktheme = true
-        }
-        else{
-            userTheme = Theme.System
-            darktheme = false
-        }
-        if (localStorage.theme === "dark") {
-            userTheme = Theme.Dark
-            darktheme = true
-        } 
-        if (localStorage.theme === "light") {
-            userTheme = Theme.Light
-            darktheme = false
-        }        
-    })
+    
 
     // Notifications
     let nlist = [
@@ -145,7 +118,26 @@
         await tick(); 
         MobileSearch.focus()
     }
+    // Search Options
+    let OptionsVisible = false
 
+    const DateOptions = [
+        "All",
+        "Today",
+        "This Week",
+        "This Month"
+    ]
+    let SelectedDateOption = DateOptions[0]
+
+    const SortOptions = [
+        "Post Date",
+        "Comments",
+        "Rating",
+    ]
+    let SelectedSortOption = SortOptions[0]
+
+    let AdditionalTags: string[] = []
+    let NewTag = ""
 </script>
 
 <Dialog open={AuthOpen} on:close={()=> (AuthOpen = false)} as="div" class="fixed inset-0">
@@ -295,8 +287,8 @@
                         <div class=" rounded-full bg-white h-7 w-7 border border-thirdary"/>
                     </PopoverButton>
                     <PopoverPanel on:mousemove={()=>{}} class="absolute right-0 top-8 z-10 flex flex-col menu max-w-xxs w-screen leading-8">
-                        {#if $signedIn == true}
-                            <a href="/profile" class="m-item">
+                        {#if $signedIn == true}              
+                            <a href={`/user/${$currentUser?.username}`} class="m-item">
                                 <UserIcon size="15"/>
                                 <span class="pl-2">Profile</span>
                             </a>
