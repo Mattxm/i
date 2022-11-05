@@ -1,7 +1,4 @@
 <script>
-
 </script>
 
-<div>
-    notifications
-</div>
+<div>notifications</div>
