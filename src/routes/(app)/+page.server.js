@@ -23,6 +23,8 @@ export const load = async ({ url }) => {
             .from('posts')
             .select(`*, profiles(*), comments(count)`)
             .ilike('title', `%${searchQuery}%`)
+            .order('created_at', { ascending: false })
+            .neq('deleted', true)
 
         return {
             success: !error,
