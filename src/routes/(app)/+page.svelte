@@ -1,8 +1,6 @@
 <script lang="ts">
     import Postresult from '$lib/postresult.svelte'
     import { page } from '$app/stores'
-    import { goto, invalidateAll } from '$app/navigation'
-
     $: results = $page.data
     $: console.log(results)
 </script>
