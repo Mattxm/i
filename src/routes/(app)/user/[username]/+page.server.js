@@ -7,6 +7,8 @@ export const load = async ({ params }) => {
             '*, comments(*, posts(title, post_id, profiles(username))), posts(*, comments(count))'
         )
         .eq(`username`, params.username)
+        .neq('posts.deleted', true)
+        .neq('comments.deleted', true)
         .single()
 
     return {
