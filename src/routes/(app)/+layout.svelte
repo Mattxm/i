@@ -5,9 +5,12 @@
     import { supabase, signOut } from '$lib/supabaseClient'
     import Signup from '$lib/signup.svelte'
     import Login from '$lib/login.svelte'
-    import { enhance } from '$app/forms'
 
     import {
+        Menu,
+        MenuButton,
+        MenuItems,
+        MenuItem,
         Listbox,
         ListboxButton,
         ListboxOptions,
@@ -52,6 +55,7 @@
     } from 'svelte-feather-icons'
     import { onMount, tick } from 'svelte'
     import { goto, invalidateAll } from '$app/navigation'
+    import { list } from 'postcss'
 
     let innerWidth = window.innerWidth
     $: {
@@ -81,6 +85,7 @@
             userTheme = Theme.Light
             darktheme = false
         }
+        GetNofications()
     })
 
     // Auth
@@ -126,8 +131,26 @@
     }
 
     // Notifications
-    let nlist = [{ text: 'New Message from X' }]
+    let nlist = []
     $: notifications = nlist.length
+
+    async function GetNofications() {
+        let { data: notifications, error } = await supabase
+            .from('notifications')
+            .select(
+                'created_at,id, message, link, res_user_id, profiles:res_user_id(username, avatar_url), posts(title)'
+            )
+        nlist = notifications
+    }
+
+    async function DeleteNotification(id) {
+        const { error } = await supabase
+            .from('notifications')
+            .delete()
+            .eq('id', id)
+
+        GetNofications()
+    }
 
     // Search bar
 
@@ -138,6 +161,7 @@
     let si = 0
     let cslist = [{ text: 'Search Posts' }, { text: 'Search Users' }]
     function sbkb(e: any) {
+        ShowSearchSuggestions = true
         switch (e.keyCode) {
             case 38:
                 si--
@@ -149,6 +173,7 @@
                 break
             case 13:
                 e.preventDefault()
+                ShowSearchSuggestions = false
                 startSearch()
                 break
         }
@@ -310,27 +335,26 @@
                             spellcheck="false"
                             aria-haspopup="listbox"
                             aria-activedescendant="selected"
-                            aria-autocomplete="list"
                             aria-owns="searchbox"
                             autocomplete="off"
                             bind:value={search}
                             on:keydown={(e) => {
                                 sbkb(e)
                             }}
-                            on:focusout={() => {
+                            on:focusout={(e) => {
                                 si = 0
+                                ShowSearchSuggestions = false
                             }}
                             on:focus={() => {
                                 if (search.replace(/\s/g, '') !== '') si = 0
-                            }}
-                            on:submit={() => {
-                                console.log('test')
+                                if (search) ShowSearchSuggestions = true
                             }}
                         />
                         {#if search}
                             <button
                                 on:click|preventDefault={() => {
                                     search = ''
+                                    ShowSearchSuggestions = false
                                 }}
                             >
                                 <XIcon size="20" />
@@ -356,8 +380,14 @@
                         >
                             {#each cslist as slitem, i}
                                 <li
+                                    on:select={(e) => {
+                                        console.log(e)
+                                    }}
                                     id={i.toString()}
-                                    on:mousedown={() => (si = i)}
+                                    on:mousedown={() => {
+                                        si = i
+                                        startSearch()
+                                    }}
                                     on:mousemove={() => {
                                         si = i
                                     }}
@@ -368,9 +398,9 @@
                                     aria-selected={si == i}
                                     class="flex items-center rounded-sm aria-selected:bg-red-400"
                                 >
-                                    <button class="w-full px-2 text-left"
-                                        >{slitem.text}</button
-                                    >
+                                    <p class="w-full px-2 text-left">
+                                        {slitem.text}
+                                    </p>
                                 </li>
                             {/each}
                         </ul>
@@ -413,7 +443,7 @@
                         </PopoverPanel>
                     </Popover>
                     <Popover class="relative flex items-center justify-center">
-                        <PopoverButton class="h-7">
+                        <PopoverButton class="h-7" on:click={GetNofications}>
                             <BellIcon class="c-text" size="20" />
                             <span
                                 class={`${
@@ -440,20 +470,41 @@
                                 <span class="px-4">No new notifactions</span>
                             {:else}
                                 {#each nlist as nlitem, i}
-                                    <span class="flex items-center px-4">
-                                        <span class="flex-1">{nlitem.text}</span
-                                        >
-                                        <button
-                                            on:click={() => {
-                                                nlist = [
-                                                    ...nlist.slice(0, i),
-                                                    ...nlist.slice(i + 1),
-                                                ]
-                                            }}
-                                            class="rounded-full hover:bg-red-400"
-                                            ><XIcon size="20" /></button
-                                        >
-                                    </span>
+                                    <div class="flex px-4">
+                                        <div class="mr-1 block h-8 w-8">
+                                            <img
+                                                class="rounded-full border border-thirdary"
+                                                src={nlitem.profiles
+                                                    .avatar_url ??
+                                                    '/placeholder.jpg'}
+                                                height="32px"
+                                                width="32px"
+                                                alt="avatar"
+                                            />
+                                        </div>
+                                        <div class="flex-1 flex-wrap">
+                                            <a
+                                                class=" flex-wrap"
+                                                href={nlitem.link}
+                                            >
+                                                {nlitem.profiles.username}
+                                                {nlitem.message}
+                                                asdfok nasjdofn ajskdnf kasdnf kjasdnf
+                                                asdfj
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <button
+                                                on:click={() => {
+                                                    DeleteNotification(
+                                                        nlitem.id
+                                                    )
+                                                }}
+                                                class="rounded-full  hover:bg-red-400"
+                                                ><XIcon size="20" />
+                                            </button>
+                                        </div>
+                                    </div>
                                 {/each}
                             {/if}
                         </PopoverPanel>
