@@ -1,20 +1,11 @@
 <script lang="ts">
     import '$lib/app.css'
     import { page } from '$app/stores'
-    import { signedIn, currentUser } from '$lib/userStore'
     import { supabase, signOut } from '$lib/supabaseClient'
     import Signup from '$lib/signup.svelte'
     import Login from '$lib/login.svelte'
 
     import {
-        Menu,
-        MenuButton,
-        MenuItems,
-        MenuItem,
-        Listbox,
-        ListboxButton,
-        ListboxOptions,
-        ListboxOption,
         Popover,
         PopoverButton,
         PopoverPanel,
@@ -29,33 +20,22 @@
         TabPanels,
     } from '@rgossiaux/svelte-headlessui'
     import {
-        CheckIcon,
         MoonIcon,
         SunIcon,
-        ChevronDownIcon,
         BellIcon,
-        Minimize2Icon,
-        TargetIcon,
         SettingsIcon,
         XIcon,
         SlidersIcon,
         UserIcon,
-        DollarSignIcon,
         LogOutIcon,
         PlusSquareIcon,
-        FolderPlusIcon,
         ZapIcon,
         LogInIcon,
         SearchIcon,
-        PlusCircleIcon,
-        InfoIcon,
-        PlusIcon,
         ArrowLeftIcon,
-        ChevronUpIcon,
     } from 'svelte-feather-icons'
     import { onMount, tick } from 'svelte'
-    import { goto, invalidateAll } from '$app/navigation'
-    import { list } from 'postcss'
+    import { goto, invalidateAll, invalidate } from '$app/navigation'
 
     let innerWidth = window.innerWidth
     $: {
@@ -65,8 +45,6 @@
     }
 
     onMount(() => {
-        currentUser.reset()
-        signedIn.reset()
         if (
             !('theme' in localStorage) &&
             window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -85,7 +63,14 @@
             userTheme = Theme.Light
             darktheme = false
         }
-        GetNofications()
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange(() => {
+            invalidate('supabase:auth')
+        })
+        return () => {
+            subscription.unsubscribe()
+        }
     })
 
     // Auth
@@ -93,6 +78,10 @@
     let AuthOpen = false
     let AuthIndex = 0
     let CurAuthIndex = AuthIndex
+
+    $: if ($page.data.session) {
+        GetNofications()
+    }
 
     // Theme
     enum Theme {
@@ -131,7 +120,7 @@
     }
 
     // Notifications
-    let nlist = []
+    let nlist = [{}]
     $: notifications = nlist.length
 
     async function GetNofications() {
@@ -422,7 +411,7 @@
             </div>
 
             <div class={`${ShowSearch && 'hidden'} h-item space-x-4`}>
-                {#if $signedIn == true}
+                {#if $page.data.session}
                     <Popover class="relative flex items-center justify-center">
                         <PopoverButton
                             class="h-7 items-center rounded-md p-0.5 transition-colors hover:bg-green-400"
@@ -509,7 +498,7 @@
                             {/if}
                         </PopoverPanel>
                     </Popover>
-                {:else if $signedIn == false}
+                {:else}
                     <button
                         on:click={() => {
                             AuthOpen = true
@@ -532,16 +521,24 @@
                 <Popover class="relative flex items-center justify-center">
                     <PopoverButton>
                         <div
-                            class=" h-7 w-7 rounded-full border border-thirdary bg-white"
-                        />
+                            class=" h-7 w-7 rounded-full bg-thirdary  dark:bg-white"
+                        >
+                            <img
+                                class="rounded-full p-0.5"
+                                alt="user avatar"
+                                src={$page.data.currentUser?.avatar_url}
+                            />
+                        </div>
                     </PopoverButton>
                     <PopoverPanel
                         on:mousemove={() => {}}
                         class="menu absolute right-0 top-8 z-10 flex w-screen max-w-xxs flex-col leading-8"
                     >
-                        {#if $signedIn == true}
+                        {#if $page.data.session}
                             <a
-                                href={`/user/${$currentUser?.username}`}
+                                href={`/user/${
+                                    $page.data.currentUser?.username ?? ''
+                                }`}
                                 class="m-item"
                             >
                                 <UserIcon size="15" />
@@ -592,7 +589,7 @@
 
                         <span class="my-1 h-px bg-thirdary" />
 
-                        {#if $signedIn}
+                        {#if $page.data.session}
                             <button on:click={signOut} class="m-item">
                                 <LogOutIcon size="15" />
                                 <span class="pl-2">Log Out</span>
