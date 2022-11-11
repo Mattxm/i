@@ -2,7 +2,6 @@
     import Postresult from '$lib/postresult.svelte'
     import { page } from '$app/stores'
     $: results = $page.data
-    $: console.log(results)
 </script>
 
 <svelte:head>

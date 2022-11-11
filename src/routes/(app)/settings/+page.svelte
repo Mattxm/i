@@ -1,5 +1,4 @@
 <script>
-    import Layout from '../+layout.svelte'
 </script>
 
-<div>settings</div>
+<div class="flex-1" />

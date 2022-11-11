@@ -21,9 +21,11 @@
 
 <div class="flex w-full flex-col justify-center px-4">
     <div class="mx-auto mt-2 flex w-full max-w-4xl">
-        <div class="mr-4 block h-16 w-16">
+        <div
+            class="mr-4 h-16 w-16 flex-none rounded-full bg-thirdary  dark:bg-white"
+        >
             <img
-                class="absolute rounded-full border border-thirdary"
+                class="rounded-full p-0.5"
                 src={user.avatar_url ?? '/placeholder.jpg'}
                 height="64px"
                 width="64px"

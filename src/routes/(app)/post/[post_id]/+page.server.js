@@ -1,6 +1,5 @@
 import { supabase } from '$lib/supabaseClient'
 import { redirect } from '@sveltejs/kit'
-import { data } from 'autoprefixer'
 
 export const load = async ({ params }) => {
     let { data: post, error } = await supabase
