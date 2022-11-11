@@ -1,6 +1,5 @@
 <script>
     import { supabase, signUpWithEmail } from '$lib/supabaseClient'
-    import { signedIn } from '$lib/userStore'
     import { onMount, createEventDispatcher } from 'svelte'
     import {
         AlertCircleIcon,
@@ -51,7 +50,7 @@
 
 <div class="w-screen max-w-xs">
     {#if errormsg.length > 0}
-        <div
+        <button
             on:click={() => {
                 errormsg = ''
             }}
@@ -59,7 +58,7 @@
         >
             <AlertCircleIcon class="text-red-500" />
             <p class="text-sm">{errormsg}.</p>
-        </div>
+        </button>
     {/if}
     <form
         on:submit|preventDefault={signUp}
