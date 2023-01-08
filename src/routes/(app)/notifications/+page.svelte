@@ -1,4 +1,4 @@
 <script>
 </script>
 
-<div>notifications</div>
+<div class="p-4 text-center text-neutral-500">page disabled</div>

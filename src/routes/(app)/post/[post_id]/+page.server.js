@@ -8,6 +8,7 @@ export const load = async ({ params }) => {
             '*, profiles(username, avatar_url), comments(*, profiles(username, avatar_url))'
         )
         .eq('post_id', params.post_id)
+        .neq('comments.deleted', true)
         .single()
 
     if (error) throw redirect(301, '/')

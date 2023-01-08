@@ -8,7 +8,7 @@ export const load: LayoutLoad = async (event) => {
     if (!session) {
         return {
             session,
-            currentUser: { username: 'null', avatar_url: 'placeholder.jpg' },
+            currentUser: { username: 'null', avatar_url: '../user.jpg' },
         }
     }
 
@@ -22,7 +22,7 @@ export const load: LayoutLoad = async (event) => {
         session,
         currentUser: {
             username: currentUser?.username,
-            avatar_url: currentUser?.avatar_url ?? 'placeholder.jpg',
+            avatar_url: currentUser?.avatar_url ?? '../user.jpg',
         },
     }
 }

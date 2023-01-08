@@ -6,5 +6,5 @@ export const load = async (event) => {
     if (!session) {
         throw redirect(303, '/')
     }
-    return
+    return {}
 }

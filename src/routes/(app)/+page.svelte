@@ -23,6 +23,6 @@
             {/if}
         </ul>
     {:else}
-        <span>test</span>
+        <span />
     {/if}
 </div>

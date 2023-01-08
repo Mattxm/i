@@ -26,7 +26,7 @@
         >
             <img
                 class="rounded-full p-0.5"
-                src={user.avatar_url ?? '/placeholder.jpg'}
+                src={$page.data.currentUser.avatar_url}
                 height="64px"
                 width="64px"
                 alt="avatar"
@@ -34,7 +34,17 @@
         </div>
 
         <div class="flex flex-1 flex-col text-left">
-            <span class="text-lg">{user.username}</span>
+            <span class="flex text-lg"
+                >{user.username}
+                <span class="flex-1 text-right text-sm ">
+                    {#if $page.data.session?.user.id == user.user_id}
+                        <a
+                            class="secondary-text rounded-sm bg-neutral-700 py-0.5 px-1"
+                            href="/settings/profile">Customize Profile</a
+                        >
+                    {/if}
+                </span>
+            </span>
             <div class="my-1 h-px w-full bg-thirdary" />
             <span class="flex text-sm text-neutral-300">
                 <CalendarIcon class="mr-2" size="16" /> Joined: {joinDate}</span

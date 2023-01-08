@@ -21,6 +21,9 @@
     .generic {
         @apply bg-primary-light text-black dark:bg-primary-dark dark:text-white;
     }
+    .tooltip {
+        @apply invisible absolute -top-8 left-1/2 -translate-x-1/2 rounded-sm bg-neutral-700 px-1 py-0.5 text-sm peer-hover:visible;
+    }
 
     .markdown a {
         @apply text-blue-400;

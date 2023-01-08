@@ -1,13 +1,10 @@
-import { supabase } from '$lib/supabaseClient'
+import { getSupabase } from '@supabase/auth-helpers-sveltekit'
+import { redirect } from '@sveltejs/kit'
 
-export const actions = {
-    test: async ({ request }) => {
-        const formData = await request.formData()
-        const {
-            data: { user },
-        } = await supabase.auth.getUser()
-
-        console.log(user)
-        console.log(formData)
-    },
+export const load = async (event) => {
+    const { session, supabaseClient } = await getSupabase(event)
+    if (!session) {
+        throw redirect(303, '/')
+    }
+    return {}
 }

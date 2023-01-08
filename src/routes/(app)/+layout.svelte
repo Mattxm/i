@@ -33,9 +33,11 @@
         LogInIcon,
         SearchIcon,
         ArrowLeftIcon,
+        MailIcon,
     } from 'svelte-feather-icons'
     import { onMount, tick } from 'svelte'
     import { goto, invalidateAll, invalidate } from '$app/navigation'
+    import Notification from '$lib/notification.svelte'
 
     let innerWidth = window.innerWidth
     $: {
@@ -80,7 +82,7 @@
     let CurAuthIndex = AuthIndex
 
     $: if ($page.data.session) {
-        GetNofications()
+        GetNotifications()
     }
 
     // Theme
@@ -120,25 +122,30 @@
     }
 
     // Notifications
-    let nlist = [{}]
-    $: notifications = nlist.length
+    let nlist: any = []
+    let ncount = 0
 
-    async function GetNofications() {
+    async function GetNotifications() {
         let { data: notifications, error } = await supabase
             .from('notifications')
             .select(
-                'created_at,id, message, link, res_user_id, profiles:res_user_id(username, avatar_url), posts(title)'
+                'created_at, id, ref_post_id, ref_comment_id, announcement, read, context, message, link, profiles:res_user_id(username, avatar_url)'
             )
-        nlist = notifications
-    }
+            .order('created_at', { ascending: false })
 
-    async function DeleteNotification(id) {
+        nlist = notifications
+        ncount = 0
+        nlist.forEach((e) => {
+            if (e?.read == false) ncount++
+        })
+    }
+    async function MarkAllRead() {
         const { error } = await supabase
             .from('notifications')
-            .delete()
-            .eq('id', id)
-
-        GetNofications()
+            .update({ read: true })
+            .eq('user_id', $page.data.session?.user.id)
+        if (error) console.log(error)
+        else GetNotifications()
     }
 
     // Search bar
@@ -285,7 +292,6 @@
                 <a
                     class="flex items-center space-x-2 text-lg font-medium"
                     href="/"
-                    data-sveltekit-prefetch
                 >
                     <ZapIcon size="28" class="c-text" />
                     <span>INVOKE</span>
@@ -432,69 +438,45 @@
                         </PopoverPanel>
                     </Popover>
                     <Popover class="relative flex items-center justify-center">
-                        <PopoverButton class="h-7" on:click={GetNofications}>
+                        <PopoverButton class="h-7">
+                            <!-- on:click={GetNotifications} -->
                             <BellIcon class="c-text" size="20" />
                             <span
                                 class={`${
-                                    notifications > 0 ? 'visible' : 'hidden'
+                                    ncount > 0 ? 'visible' : 'hidden'
                                 } absolute -top-1 -right-1 rounded-full bg-red-400 px-1 text-xs`}
-                                >{notifications}</span
+                                >{ncount}</span
                             >
                         </PopoverButton>
 
                         <PopoverPanel
                             class="menu absolute right-0 top-8 z-10 w-screen max-w-xs"
                         >
-                            <div class="flex items-center px-4">
-                                <span class="c-text flex-1"
-                                    ><a href="/notifications">Notifications</a
+                            <div class="flex items-center space-x-2 px-2">
+                                <span class=" flex-1"
+                                    ><a class="c-text" href="/notifications"
+                                        >Notifications</a
                                     ></span
                                 >
+                                <button on:click={MarkAllRead} class="c-text">
+                                    <MailIcon size="20" />
+                                </button>
                                 <a href="/" class="c-text"
                                     ><SettingsIcon size="20" /></a
                                 >
                             </div>
                             <div class="my-1 mb-1 h-px bg-thirdary" />
-                            {#if notifications == 0}
-                                <span class="px-4">No new notifactions</span>
+                            {#if nlist.length == 0}
+                                <span class="px-2">No new notifactions</span>
                             {:else}
-                                {#each nlist as nlitem, i}
-                                    <div class="flex px-4">
-                                        <div class="mr-1 block h-8 w-8">
-                                            <img
-                                                class="rounded-full border border-thirdary"
-                                                src={nlitem.profiles
-                                                    .avatar_url ??
-                                                    '/placeholder.jpg'}
-                                                height="32px"
-                                                width="32px"
-                                                alt="avatar"
-                                            />
-                                        </div>
-                                        <div class="flex-1 flex-wrap">
-                                            <a
-                                                class=" flex-wrap"
-                                                href={nlitem.link}
-                                            >
-                                                {nlitem.profiles.username}
-                                                {nlitem.message}
-                                                asdfok nasjdofn ajskdnf kasdnf kjasdnf
-                                                asdfj
-                                            </a>
-                                        </div>
-                                        <div>
-                                            <button
-                                                on:click={() => {
-                                                    DeleteNotification(
-                                                        nlitem.id
-                                                    )
-                                                }}
-                                                class="rounded-full  hover:bg-red-400"
-                                                ><XIcon size="20" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                {/each}
+                                <ul>
+                                    {#each nlist as nlitem}
+                                        <Notification
+                                            on:delete={GetNotifications}
+                                            notification={nlitem}
+                                        />
+                                    {/each}
+                                </ul>
                             {/if}
                         </PopoverPanel>
                     </Popover>

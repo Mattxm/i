@@ -9,7 +9,7 @@
     >
         <img
             class="rounded-full p-0.5"
-            src={$page.data.currentUser.avatar_url}
+            src={`${$page.data.currentUser.avatar_url}`}
             alt="avatar"
         />
     </div>
@@ -24,13 +24,13 @@
 </div>
 <div class="mx-auto flex max-w-4xl px-4">
     <div class="mr-4 min-h-screen w-48">
-        <ul class="text-neutral-200">
+        <ul class="dark:text-neutral-200">
             <li>
                 <div
                     class={`${
                         $page.url.pathname == '/settings/profile' &&
-                        'bg-neutral-700'
-                    } h-8 overflow-hidden rounded-sm pr-1 hover:bg-neutral-600`}
+                        'bg-neutral-400 dark:bg-neutral-700'
+                    } h-8 overflow-hidden rounded-sm pr-1 hover:bg-neutral-300 dark:hover:bg-neutral-600`}
                 >
                     <a
                         class="flex h-full items-center space-x-2"
@@ -52,8 +52,8 @@
                 <div
                     class={`${
                         $page.url.pathname == '/settings/appearance' &&
-                        'bg-neutral-700'
-                    } h-8 overflow-hidden rounded-sm pr-1 hover:bg-neutral-600`}
+                        'bg-neutral-400 dark:bg-neutral-700'
+                    } h-8 overflow-hidden rounded-sm pr-1 hover:bg-neutral-300 dark:hover:bg-neutral-600`}
                 >
                     <a
                         class="flex h-full items-center space-x-2"
@@ -75,8 +75,8 @@
                 <div
                     class={`${
                         $page.url.pathname == '/settings/notifications' &&
-                        'bg-neutral-700'
-                    } h-8 overflow-hidden rounded-sm pr-1 hover:bg-neutral-600`}
+                        'bg-neutral-400 dark:bg-neutral-700'
+                    } h-8 overflow-hidden rounded-sm pr-1 hover:bg-neutral-300 dark:hover:bg-neutral-600`}
                 >
                     <a
                         class="flex h-full items-center space-x-2"

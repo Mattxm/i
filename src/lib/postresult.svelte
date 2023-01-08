@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import {
         ArrowDownIcon,
         ArrowUpIcon,
@@ -13,14 +13,14 @@
         ChevronUpIcon,
     } from 'svelte-feather-icons'
     import timeBetween from '$lib/timeBetween'
-    export let post = {}
+    export let post: any = {}
     $: tags = post.tags.split(',')
     $: commentcount = post.comments[0].count
     let expanded = false
 </script>
 
 <li
-    class="flex flex-col rounded-sm border-t border-thirdary bg-neutral-100 py-2 px-4 dark:bg-neutral-800"
+    class={`flex flex-col rounded-sm border-t border-thirdary bg-neutral-100 py-2 px-4 dark:bg-neutral-800`}
 >
     <div class="mx-auto flex w-full max-w-4xl flex-col">
         <span class="flex w-full">
