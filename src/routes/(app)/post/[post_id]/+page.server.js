@@ -2,32 +2,33 @@ import { supabase } from '$lib/supabaseClient'
 import { redirect } from '@sveltejs/kit'
 
 export const load = async ({ params }) => {
+    
+    return {
+        post: GetPost(params),
+        comments: GetComments(params)
+    }
+}
+
+async function GetPost(params){
     let { data: post, error } = await supabase
         .from('posts')
         .select(
-            '*, profiles(username, avatar_url), comments(*, profiles(username, avatar_url))'
+            '*, profiles(avatar_url, username)'
         )
         .eq('post_id', params.post_id)
-        .neq('comments.deleted', true)
         .single()
 
-    if (error) throw redirect(301, '/')
+    return post
+}
 
-    if (post.deleted)
-        return {
-            post: {
-                deleted: post.deleted,
-                post_id: post.post_id,
-                created_at: post.created_at,
-                content: 'deleted',
-                tags: post.tags,
-                title: post.title,
-                comments: post.comments,
-                profiles: { username: 'deleted', avatar_url: null },
-            },
-        }
+async function GetComments(params){
+    let { data: comments, error } = await supabase
+        .from('comments')
+        .select(
+            '*, profiles(avatar_url, username)'
+        )
+        .eq('post_id', params.post_id)
 
-    return {
-        post: post,
-    }
+        console.log(comments);
+        return comments
 }

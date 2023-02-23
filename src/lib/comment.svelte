@@ -4,17 +4,23 @@
     import { page } from '$app/stores'
     import { supabase } from '$lib/supabaseClient'
     import { marked } from 'marked'
+    import TextArea from './TextArea.svelte'
     marked.setOptions({ gfm: true, breaks: true })
 
     export let comment = {
-        profiles: { username: '', avatar_url: '' },
+        profiles: { avatar_url: '', username: '' },
         content: '',
         created_at: Date(),
+        deleted: false,
     }
     $: contentmd = marked.parse(comment?.content)
-    let open = true
+    let open = !comment.deleted
     let collapsed = false
     let replies = []
+    let editText = comment.content
+    let editOpen = false
+
+    async function EditComment() {}
 
     async function DeleteComment() {
         const { data, error } = await supabase
@@ -22,6 +28,7 @@
             .update([
                 {
                     deleted: true,
+                    content: 'deleted',
                 },
             ])
             .eq('comment_id', comment?.comment_id)
@@ -30,7 +37,7 @@
     }
 </script>
 
-<div class="flex rounded-sm bg-neutral-800 p-2">
+<div class="flex rounded-sm bg-primary-light p-2 dark:bg-primary-dark">
     <button
         on:click={() => (open = !open)}
         class="group flex w-4 justify-center pr-2"
@@ -45,42 +52,53 @@
                 on:click|preventDefault
                 class="relative flex list-none text-sm"
             >
-                <a
-                    href={`/user/${comment.profiles.username}`}
-                    class="text-blue-400"
-                >
-                    {comment.profiles.username}
-                </a>
+                {#if comment.deleted}
+                    deleted
+                {:else}
+                    <a
+                        href={`/user/${comment.profiles.username}`}
+                        class="text-blue-400"
+                    >
+                        {comment.profiles.username}
+                    </a>
+                {/if}
                 <span class="ml-1"> {timeBetween(comment.created_at)}</span>
                 <span
                     class={`flex-1 text-right text-neutral-400 ${
                         open ? 'invisible' : 'visible'
                     }`}
                 >
-                    {`${replies.length + 1} comment hidden`}
+                    {`hidden (${replies.length + 1})`}
                 </span>
             </summary>
-            <div class="markdown">{@html contentmd}</div>
-            <div class="flex w-full text-sm text-neutral-400">
-                <button
-                    on:click={DeleteComment}
-                    class={`${
-                        $page.data?.session?.user?.id == comment.user_id
-                            ? 'flex'
-                            : 'hidden'
-                    } mr-2`}
-                >
-                    delete
+
+            {#if editOpen}
+                <TextArea
+                    value={editText}
+                    rows={2}
+                    on:changedoi={(v) => {
+                        editText = v.detail
+                    }}
+                />
+            {:else}
+                <pre
+                    class=" overflow-x-auto whitespace-pre-wrap break-words">{comment.content}</pre>
+            {/if}
+
+            <div class="flex w-full space-x-2 text-sm text-neutral-400">
+                {#if $page.data?.session?.user?.id == comment.user_id}
+                    <button on:click={DeleteComment}> delete </button>
+                    <button on:click={() => (editOpen = !editOpen)}>
+                        {editOpen ? 'cancel' : 'edit'}
+                    </button>
+                    {#if editOpen}
+                        <button on:click={EditComment}> save </button>
+                    {/if}
+                {/if}
+                <button>
+                    {`${collapsed ? 'show' : 'hide'} `}replies
                 </button>
-                <button class="mr-2">
-                    {`${collapsed ? 'show' : 'hide'} `} replies
-                </button>
-                <div class="relative">
-                    <button class="peer mr-2"> reply </button>
-                    <div class="tooltip">
-                        <span class="whitespace-nowrap">Disabled</span>
-                    </div>
-                </div>
+                <button> reply </button>
             </div>
         </details>
     </div>

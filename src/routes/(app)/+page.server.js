@@ -22,7 +22,7 @@ export const load = async ({ url }) => {
         let { data: posts, error } = await supabase
             .from('posts')
             .select(`*, profiles(*), comments(count)`)
-            .ilike('title', `%${searchQuery}%`)
+            .or(`title.ilike.%${searchQuery}%,tags.ilike.%${searchQuery}%`)
             .order('created_at', { ascending: false })
             .neq('deleted', true)
 

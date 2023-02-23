@@ -22,7 +22,7 @@
         @apply bg-primary-light text-black dark:bg-primary-dark dark:text-white;
     }
     .tooltip {
-        @apply invisible absolute -top-8 left-1/2 -translate-x-1/2 rounded-sm bg-neutral-700 px-1 py-0.5 text-sm peer-hover:visible;
+        @apply invisible absolute -top-full -translate-y-1 rounded-sm bg-neutral-600 px-1 py-0.5 text-sm text-white peer-hover:visible;
     }
 
     .markdown a {
@@ -70,10 +70,13 @@
         @apply bg-secondary-light dark:bg-secondary-dark;
     }
     ::-webkit-scrollbar-thumb {
-        @apply border-2 border-solid border-secondary-light bg-primary-dark hover:bg-thirdary dark:border-secondary-dark dark:bg-neutral-400 dark:hover:bg-thirdary;
+        @apply border border-solid border-secondary-light bg-primary-dark hover:bg-thirdary dark:border-secondary-dark dark:bg-neutral-400 dark:hover:bg-thirdary;
     }
 }
 
 * {
+    font-family: 'Roboto', sans-serif;
+}
+pre {
     font-family: 'Roboto', sans-serif;
 }

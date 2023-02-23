@@ -10,6 +10,8 @@
     import { page } from '$app/stores'
 
     $: user = $page.data.user
+    $: posts = $page.data.posts
+    $: comments = $page.data.comments
     let description: HTMLElement
     let showDescription = false
     $: descriptionOverflowing = description
@@ -19,8 +21,8 @@
     $: joinDate = new Date(user.join_date).toLocaleString().split(',')[0]
 </script>
 
-<div class="flex w-full flex-col justify-center px-4">
-    <div class="mx-auto mt-2 flex w-full max-w-4xl">
+<div class="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4">
+    <div class="mt-2 flex">
         <div
             class="mr-4 h-16 w-16 flex-none rounded-full bg-thirdary  dark:bg-white"
         >
@@ -54,7 +56,7 @@
             {/if}
         </div>
     </div>
-    <div class="mx-auto mt-2 flex w-full max-w-4xl flex-col">
+    <div class="mt-2 flex flex-col">
         {#if user.description}
             <div class="text-sm">
                 <div
@@ -74,40 +76,49 @@
             </div>
         {/if}
     </div>
-    <div class="mx-auto flex w-full max-w-4xl flex-col">
+    <div class="mx-auto flex w-full flex-col">
         <span class="mt-4">Recent Posts</span>
         <div class="my-1 h-px w-full bg-thirdary" />
-        {#each user.posts as post}
-            <span class="flex flex-col text-sm">
-                <a href={`/post/${post.post_id}`} class="mr-4 hover:underline"
-                    >{post.title}</a
-                >
-                <span class="text-neutral-400"
-                    >{timeBetween(post.created_at)}</span
-                >
-            </span>
-        {/each}
-        <span class="mt-4">Recent Comments</span>
-        <div class="my-1 h-px w-full bg-thirdary" />
-        {#each user.comments as comment}
-            <span class="flex flex-col line-clamp-4">
-                <div class="markdown">{comment.content}</div>
-                <span class="text-sm text-neutral-400"
-                    >In
+        {#if posts.length > 0}
+            {#each posts as post}
+                <span class="flex flex-col text-sm">
                     <a
-                        href={`/post/${comment.posts.post_id}`}
-                        class="hover:underline"
+                        href={`/post/${post.post_id}`}
+                        class="mr-4 hover:underline">{post.title}</a
                     >
-                        "{comment.posts.title}"
-                    </a>
-                    by
-                    <a
-                        href={`/user/${comment.posts.profiles.username}`}
-                        class="hover:underline"
-                        >{comment.posts.profiles.username}</a
+                    <span class="text-neutral-400"
+                        >{timeBetween(post.created_at)}</span
                     >
                 </span>
-            </span>
-        {/each}
+            {/each}
+        {:else}
+            <div class="text-sm">This user has made no posts.</div>
+        {/if}
+        <span class="mt-4">Recent Comments</span>
+        <div class="my-1 h-px w-full bg-thirdary" />
+        {#if comments.length > 0}
+            {#each comments as comment}
+                <span class="flex flex-col line-clamp-4">
+                    <div class="markdown">{comment.content}</div>
+                    <span class="text-sm text-neutral-400"
+                        >In
+                        <a
+                            href={`/post/${comment.posts.post_id}`}
+                            class="hover:underline"
+                        >
+                            "{comment.posts.title}"
+                        </a>
+                        by
+                        <a
+                            href={`/user/${comment.posts.profiles.username}`}
+                            class="hover:underline"
+                            >{comment.posts.profiles.username}</a
+                        >
+                    </span>
+                </span>
+            {/each}
+        {:else}
+            <div class="text-sm">This user has made no comments.</div>
+        {/if}
     </div>
 </div>

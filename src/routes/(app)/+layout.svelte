@@ -217,7 +217,7 @@
         class="pointer-events-none fixed inset-0 flex items-center justify-center overflow-y-auto"
     >
         <div
-            class=" pointer-events-auto overflow-hidden rounded-md bg-secondary-light dark:bg-secondary-dark"
+            class=" pointer-events-auto overflow-hidden rounded-sm bg-secondary-light dark:bg-secondary-dark border border-thirdary"
         >
             <DialogTitle class="px-4 py-2 text-center text-lg">
                 {#if CurAuthIndex == 0}

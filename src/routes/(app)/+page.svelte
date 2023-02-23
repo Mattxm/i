@@ -1,7 +1,10 @@
 <script lang="ts">
     import Postresult from '$lib/postresult.svelte'
     import { page } from '$app/stores'
-    $: results = $page.data
+    $: success = $page.data.success
+    $: type = $page.data.type
+    $: results = $page.data.data
+    $: console.log(results)
 </script>
 
 <svelte:head>
@@ -12,17 +15,23 @@
 
 <div
     id="main"
-    class="flex min-h-screen bg-primary-light text-black dark:bg-primary-dark dark:text-white"
+    class="flex min-h-screen bg-primary-light text-black dark:bg-neutral-800 dark:text-white"
 >
-    {#if results.type == 0}
-        <ul class="flex-1">
-            {#if results.data != null}
-                {#each results.data as post}
-                    <Postresult {post} />
-                {/each}
+    {#if success}
+        {#if type == 0}
+            {#if results.length > 0}
+                <ul class="flex-1">
+                    {#each results as post}
+                        <Postresult {post} />
+                    {/each}
+                </ul>
+            {:else}
+                <div class="mt-2 w-full text-center">No Results</div>
             {/if}
-        </ul>
+        {:else}
+            <div>User Search</div>
+        {/if}
     {:else}
-        <span />
+        Error
     {/if}
 </div>

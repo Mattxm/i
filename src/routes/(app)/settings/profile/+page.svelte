@@ -1,4 +1,4 @@
 <script>
 </script>
 
-<div class="flex-1">Placeholder Profile Settings</div>
+<div>Placeholder Profile Settings</div>

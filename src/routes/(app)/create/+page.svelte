@@ -13,6 +13,7 @@
         ShuffleIcon,
     } from 'svelte-feather-icons'
     import { LoremIpsum } from 'lorem-ipsum'
+    import { page } from '$app/stores'
 
     function RandomizePost() {
         const lorem = new LoremIpsum({
