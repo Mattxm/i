@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-    <title>Main</title>
+    <title>Invoke</title>
     <meta name="main page" content="main page content" />
     <html lang="en" />
 </svelte:head>
@@ -20,7 +20,7 @@
     {#if success}
         {#if type == 0}
             {#if results.length > 0}
-                <ul class="flex-1">
+                <ul class="w-full">
                     {#each results as post}
                         <Postresult {post} />
                     {/each}
@@ -29,7 +29,7 @@
                 <div class="mt-2 w-full text-center">No Results</div>
             {/if}
         {:else}
-            <div>User Search</div>
+            <div>User Search (Not Implemented)</div>
         {/if}
     {:else}
         Error

@@ -24,22 +24,19 @@
     let expanded = false
 </script>
 
-<li
-    class={`flex rounded-sm border-t border-thirdary bg-neutral-100 py-2 px-4 last:border-b dark:bg-neutral-800`}
->
-    <div class="mr-4 flex w-8 flex-col items-center space-y-1 text-center">
+<li class={`flex max-w-full border-t border-thirdary py-2 px-4 last:border-b`}>
+    <div class="flex w-8 flex-col items-center space-y-1 pr-4 text-center">
         <ArrowUpIcon class="text-neutral-300 hover:text-green-400" />
         <div class="text-sm text-neutral-300">0</div>
         <ArrowDownIcon class="text-neutral-300 hover:text-red-400" />
     </div>
-    <div class="flex w-full flex-col">
-        <span class="flex w-full">
-            <a
-                href={`/post/${post.post_id}`}
-                class="visited:text-neutral-800 hover:underline dark:visited:text-neutral-200"
-                >{post.title}</a
-            >
-        </span>
+    <div class="flex flex-col overflow-hidden">
+        <p
+            class="break-words visited:text-neutral-800 hover:underline dark:visited:text-neutral-200"
+        >
+            <a href={`/post/${post.post_id}`}>{post.title}</a>
+        </p>
+
         <span class="flex items-center space-x-1 text-sm text-neutral-300">
             <a
                 href={`/user/${post.profiles.username}`}
@@ -54,7 +51,18 @@
                     </div>
                 </div>
             </div>
+            <ul class="flex flex-1">
+                {#each tags as tag}
+                    <li class="rounded-sm text-center text-sm ">
+                        in <a
+                            class="text-blue-400 hover:underline"
+                            href={`?search=${tag}&post=true`}>{tag}</a
+                        >
+                    </li>
+                {/each}
+            </ul>
         </span>
+        <span class="flex-1" />
         <span class="text-sm text-neutral-300">
             <a href={`/post/${post.post_id}`} class=" hover:underline"
                 >{commentcount == 1
@@ -62,16 +70,6 @@
                     : `${commentcount} comments`}</a
             >
         </span>
-
-        <ul class="flex flex-1 space-x-2">
-            {#each tags as tag}
-                <li
-                    class="rounded-sm border border-green-300 px-1 text-center text-sm text-neutral-200"
-                >
-                    {tag}
-                </li>
-            {/each}
-        </ul>
 
         <!-- <span class="flex">
             <ul class="mt-2 flex flex-1 space-x-2">
@@ -104,3 +102,9 @@
 
     <!-- <p class="hidden">{post.content}</p> -->
 </li>
+
+<style>
+    .test {
+        overflow-wrap: break-word;
+    }
+</style>

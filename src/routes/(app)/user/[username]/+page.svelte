@@ -21,6 +21,12 @@
     $: joinDate = new Date(user.join_date).toLocaleString().split(',')[0]
 </script>
 
+<svelte:head>
+    <title>{user.username} - Invoke</title>
+    <meta name="profile page" content="profile page content" />
+    <html lang="en" />
+</svelte:head>
+
 <div class="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4">
     <div class="mt-2 flex">
         <div
@@ -81,10 +87,10 @@
         <div class="my-1 h-px w-full bg-thirdary" />
         {#if posts.length > 0}
             {#each posts as post}
-                <span class="flex flex-col text-sm">
+                <span class=" flex flex-col overflow-hidden text-sm">
                     <a
                         href={`/post/${post.post_id}`}
-                        class="mr-4 hover:underline">{post.title}</a
+                        class="mr-4 break-words hover:underline">{post.title}</a
                     >
                     <span class="text-neutral-400"
                         >{timeBetween(post.created_at)}</span
@@ -100,18 +106,18 @@
             {#each comments as comment}
                 <span class="flex flex-col line-clamp-4">
                     <div class="markdown">{comment.content}</div>
-                    <span class="text-sm text-neutral-400"
+                    <span class="overflow-hidden text-sm text-neutral-400"
                         >In
                         <a
                             href={`/post/${comment.posts.post_id}`}
-                            class="hover:underline"
+                            class="break-words hover:underline"
                         >
                             "{comment.posts.title}"
                         </a>
                         by
                         <a
                             href={`/user/${comment.posts.profiles.username}`}
-                            class="hover:underline"
+                            class="break-words hover:underline"
                             >{comment.posts.profiles.username}</a
                         >
                     </span>

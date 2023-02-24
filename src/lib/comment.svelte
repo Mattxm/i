@@ -20,7 +20,21 @@
     let editText = comment.content
     let editOpen = false
 
-    async function EditComment() {}
+    async function EditComment() {
+        const { data, error } = await supabase
+            .from('comments')
+            .update([
+                {
+                    content: editText,
+                },
+            ])
+            .eq('comment_id', comment?.comment_id)
+
+        if (!error) {
+            comment.content = editText
+            editOpen = false
+        }
+    }
 
     async function DeleteComment() {
         const { data, error } = await supabase
@@ -33,7 +47,11 @@
             ])
             .eq('comment_id', comment?.comment_id)
 
-        if (!error) comment.content = 'deleted'
+        if (!error) {
+            comment.deleted = true
+            comment.content = 'deleted'
+            comment.profiles.username = 'deleted'
+        }
     }
 </script>
 
@@ -75,7 +93,7 @@
             {#if editOpen}
                 <TextArea
                     value={editText}
-                    rows={2}
+                    rows={editText.split(/\n/).length + 3}
                     on:changedoi={(v) => {
                         editText = v.detail
                     }}

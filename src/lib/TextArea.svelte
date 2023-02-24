@@ -4,6 +4,7 @@
 
     export let value = ''
     export let rows = 1
+    export let placeholder = ''
 
     function textchanged(e) {
         dispatch('changedoi', value)
@@ -75,9 +76,10 @@
         on:input={(e) => {
             textchanged(e)
         }}
-        class="t box-border flex-1 resize-none overflow-y-scroll rounded-sm border border-thirdary bg-primary-light p-2 text-black outline-none dark:bg-primary-dark dark:text-white"
+        class="t box-border flex-1 resize-none overflow-y-scroll rounded-sm border border-thirdary bg-primary-light p-2 text-black outline-none placeholder:text-neutral-400 dark:bg-primary-dark dark:text-white"
         name="edit"
         id="edit"
+        {placeholder}
         {rows}
     />
 </div>

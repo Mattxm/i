@@ -89,6 +89,12 @@
     }
 </script>
 
+<svelte:head>
+    <title>{post.title} - Invoke</title>
+    <meta name="profile page" content="profile page content" />
+    <html lang="en" />
+</svelte:head>
+
 <Dialog
     open={DeleteOpen}
     on:close={() => (DeleteOpen = false)}
@@ -140,7 +146,7 @@
 >
     <div class="mt-2 flex w-full flex-col ">
         <div class="flex flex-col space-y-1">
-            <span class="text-2xl">{post.title}</span>
+            <span class="break-words text-2xl">{post.title}</span>
             <span class="flex text-sm text-neutral-400 ">
                 <div class="flex space-x-1 text-base text-neutral-400">
                     <img
@@ -181,7 +187,7 @@
                 {:else}
                     <TextArea
                         value={EditText}
-                        rows={15}
+                        rows={EditText.split(/\n/).length + 5}
                         on:changedoi={(v) => (EditText = v.detail)}
                     />
                     <div class="flex items-center space-x-4">
@@ -306,12 +312,19 @@
             {markdown}
         </div> -->
 
-        <div id="comments" class="mt-4 space-y-2">
-            <span>Comments</span>
-
-            {#each comments as comment}
-                <Comment {comment} />
-            {/each}
+        <div id="comments" class="mt-4 flex flex-col space-y-2">
+            <span class="text-lg">Comments</span>
+            {#if comments.length > 0}
+                {#each comments as comment}
+                    <Comment {comment} />
+                {/each}
+            {:else if $page.data?.session}
+                <span class=""
+                    >Nothing here, be the first to comment on this post.</span
+                >
+            {:else}
+                <span class="">Login or Signup to comment.</span>
+            {/if}
         </div>
     </div>
 </div>
