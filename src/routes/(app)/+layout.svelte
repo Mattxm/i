@@ -217,7 +217,7 @@
         class="pointer-events-none fixed inset-0 flex items-center justify-center overflow-y-auto"
     >
         <div
-            class=" pointer-events-auto overflow-hidden rounded-sm bg-secondary-light dark:bg-secondary-dark border border-thirdary"
+            class=" pointer-events-auto overflow-hidden rounded-sm border border-thirdary bg-secondary-light dark:bg-secondary-dark"
         >
             <DialogTitle class="px-4 py-2 text-center text-lg">
                 {#if CurAuthIndex == 0}
@@ -418,7 +418,13 @@
 
             <div class={`${ShowSearch && 'hidden'} h-item space-x-4`}>
                 {#if $page.data.session}
-                    <Popover class="relative flex items-center justify-center">
+                    <a
+                        href="/create"
+                        class="h-7 items-center rounded-md p-0.5 transition-colors hover:bg-red-400"
+                    >
+                        <PlusSquareIcon />
+                    </a>
+                    <!-- <Popover class="relative flex items-center justify-center">
                         <PopoverButton
                             class="h-7 items-center rounded-md p-0.5 transition-colors hover:bg-green-400"
                         >
@@ -431,12 +437,12 @@
                                 <PlusSquareIcon size="15" />
                                 <span class="pl-2">New Post</span>
                             </a>
-                            <!-- <a href="/" class="m-item">
+                            <a href="/" class="m-item">
                                 <FolderPlusIcon size="15"/>
                                 <span class="pl-2">New Collection</span>
-                            </a> -->
+                            </a>
                         </PopoverPanel>
-                    </Popover>
+                    </Popover> -->
                     <Popover class="relative flex items-center justify-center">
                         <PopoverButton class="h-7">
                             <!-- on:click={GetNotifications} -->

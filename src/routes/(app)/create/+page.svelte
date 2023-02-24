@@ -14,6 +14,7 @@
     } from 'svelte-feather-icons'
     import { LoremIpsum } from 'lorem-ipsum'
     import { page } from '$app/stores'
+    import TextArea from '$lib/TextArea.svelte'
 
     function RandomizePost() {
         const lorem = new LoremIpsum({
@@ -35,8 +36,8 @@
     let title = ''
     let content = ''
     $: validcategory = tag.id > 0
-    $: validtitle = title.length <= 100 && title.length > 0
-    $: validcontent = content.length <= 1000 && content.length > 0
+    $: validtitle = title.length <= 200 && title.length > 0
+    $: validcontent = content.length <= 5000 && content.length > 0
 
     const taglist = [
         { id: 0, name: 'Choose Category', disabled: true },
@@ -78,116 +79,143 @@
     }
 </script>
 
+<svelte:head>
+    <title>Create</title>
+    <meta name="create page" content="create page content" />
+    <html lang="en" />
+</svelte:head>
+
 <div
-    class="mx-auto mt-2 flex max-w-2xl justify-center text-black dark:text-white"
+    class="mx-auto flex max-w-7xl flex-col-reverse justify-center px-2 md:flex-row md:space-x-2"
 >
-    <div
-        class=" relative flex flex-1 flex-col rounded-sm bg-neutral-100 p-4 dark:bg-neutral-800"
-    >
-        <div class="flex w-full items-center">
-            <span class="flex-1 text-left text-lg">New Post</span>
-
-            <span class="relative">
-                <button
-                    class="peer rounded-sm p-1 hover:bg-red-500"
-                    on:click={RandomizePost}><ShuffleIcon size="20" /></button
-                >
-                <div class="tooltip">
-                    <span class="whitespace-nowrap">Random</span>
-                </div>
-            </span>
-        </div>
-
-        <div class="my-2 h-px bg-thirdary" />
-
-        <form
-            on:submit|preventDefault={CreatePost}
-            class="flex flex-col space-y-4"
+    <div class="mt-2 flex flex-1 shadow-md">
+        <div
+            class=" relative flex flex-1 flex-col space-y-2 rounded-md bg-neutral-100 p-4 dark:bg-secondary-dark"
         >
-            <div class="w-screen max-w-xxs">
-                <Listbox
-                    value={tag}
-                    on:change={(e) => {
-                        tag = e.detail
-                    }}
-                    class="relative w-full rounded-md bg-secondary-light dark:bg-secondary-dark"
-                >
-                    <ListboxButton
-                        class="flex w-full border border-thirdary px-2 py-1"
+            <div class="flex w-full items-center border-b border-thirdary">
+                <span class="flex-1 text-lg">New Post</span>
+
+                <span class="relative">
+                    <button
+                        class="peer rounded-sm p-1 transition-colors hover:bg-red-400"
+                        on:click={RandomizePost}
+                        ><ShuffleIcon size="20" /></button
                     >
-                        <span class="flex-1 text-left">{tag.name}</span>
-                        <ChevronDownIcon size="20" />
-                    </ListboxButton>
-                    <ListboxOptions
-                        class="absolute top-0 w-screen max-w-xxs border border-thirdary bg-secondary-light pt-1 dark:bg-secondary-dark"
-                    >
-                        <div class="px-2">Category</div>
-                        <div class="my-0.5 h-px bg-thirdary" />
-                        {#each taglist as posttag}
-                            {#if posttag.id > 0}
-                                <ListboxOption
-                                    value={posttag}
-                                    disabled={posttag?.disabled}
-                                    class={({ active }) =>
-                                        `${
-                                            active ? 'bg-red-400' : ''
-                                        } flex rounded-sm px-2 py-0.5`}
-                                    let:selected
-                                >
-                                    <div class="w-6">
-                                        {#if selected}
-                                            <CheckIcon size="20" />
-                                        {/if}
-                                    </div>
-                                    <span
-                                        class={`${
-                                            posttag.disabled && 'line-through'
-                                        }`}
-                                    >
-                                        {posttag.name}
-                                    </span>
-                                </ListboxOption>
-                            {/if}
-                        {/each}
-                    </ListboxOptions>
-                </Listbox>
-            </div>
-            <div>
-                <label for="title">Title</label>
-                <span class={`${!validtitle && 'text-red-500'} float-right`}
-                    >({title.length}/100)</span
-                >
-                <input
-                    bind:value={title}
-                    type="text"
-                    name="title"
-                    id="title"
-                    class={`w-full rounded-sm border border-thirdary bg-neutral-100 p-1 text-sm text-black focus:bg-white focus:outline-none dark:bg-primary-dark dark:text-white dark:focus:bg-secondary-dark`}
-                />
+                    <div class="tooltip">
+                        <span class="whitespace-nowrap">Random</span>
+                    </div>
+                </span>
             </div>
 
-            <div>
-                <label for="content">Content</label>
-                <span class={`${!validcontent && 'text-red-500'} float-right`}
-                    >({content.length}/1000)</span
-                >
-                <textarea
-                    bind:value={content}
-                    name="content"
-                    id="content"
-                    rows="10"
-                    class={`w-full rounded-sm border border-thirdary bg-neutral-100 p-1 text-sm text-black focus:bg-white focus:outline-none dark:bg-primary-dark dark:text-white dark:focus:bg-secondary-dark`}
-                />
-            </div>
-            <span class="border-t border-thirdary pt-2 text-right">
-                <button
-                    class={`${
-                        (!validtitle || !validcategory || !validcontent) &&
-                        'cursor-not-allowed'
-                    } rounded-sm border border-thirdary py-0.5 px-2`}
-                    >Post</button
-                >
-            </span>
-        </form>
+            <form
+                on:submit|preventDefault={CreatePost}
+                class="flex flex-col space-y-2"
+            >
+                <div class="w-screen max-w-xs">
+                    <Listbox
+                        value={tag}
+                        on:change={(e) => {
+                            tag = e.detail
+                        }}
+                        class="relative"
+                    >
+                        <ListboxButton
+                            class="flex w-full items-center rounded-sm border border-thirdary bg-secondary-light px-2 py-1 dark:bg-primary-dark"
+                        >
+                            <span class="flex-1 text-left">{tag.name}</span>
+                            <ChevronDownIcon size="20" />
+                        </ListboxButton>
+                        <ListboxOptions
+                            class="absolute top-0 w-screen max-w-xs rounded-sm border border-thirdary bg-secondary-light pt-1 shadow-md dark:bg-primary-dark"
+                        >
+                            <div class="px-2">Choose Category</div>
+                            <div class="my-0.5 h-px bg-thirdary" />
+                            {#each taglist as posttag}
+                                {#if posttag.id > 0}
+                                    <ListboxOption
+                                        value={posttag}
+                                        disabled={posttag?.disabled}
+                                        class={({ active }) =>
+                                            `${
+                                                active ? 'bg-red-400' : ''
+                                            } flex rounded-sm px-2 py-0.5`}
+                                        let:selected
+                                    >
+                                        <div class="w-6">
+                                            {#if selected}
+                                                <CheckIcon size="20" />
+                                            {/if}
+                                        </div>
+                                        <span
+                                            class={`${
+                                                posttag.disabled &&
+                                                'line-through'
+                                            }`}
+                                        >
+                                            {posttag.name}
+                                        </span>
+                                    </ListboxOption>
+                                {/if}
+                            {/each}
+                        </ListboxOptions>
+                    </Listbox>
+                </div>
+                <div>
+                    <label for="title" hidden>Title</label>
+                    <span class={`${!validtitle && 'text-red-400'} float-right`}
+                        >{title.length}/200</span
+                    >
+                    <input
+                        bind:value={title}
+                        type="text"
+                        name="title"
+                        id="title"
+                        placeholder="Title..."
+                        class={`w-full rounded-sm border border-thirdary bg-neutral-100 p-2 placeholder:text-neutral-400 focus:outline-none dark:bg-primary-dark`}
+                    />
+                </div>
+
+                <div class="w-full flex-col text-right">
+                    <label for="content" hidden>Content</label>
+                    <span class={`${!validcontent && 'text-red-400'}`}
+                        >{content.length}/5000</span
+                    >
+                    <TextArea
+                        value={content}
+                        rows={10}
+                        placeholder="Text..."
+                        on:changedoi={(v) => {
+                            content = v.detail
+                        }}
+                    />
+                </div>
+                <span class="text-right">
+                    <button
+                        class={`${
+                            (!validtitle || !validcategory || !validcontent) &&
+                            'cursor-not-allowed text-neutral-400'
+                        } rounded-sm border border-thirdary py-0.5 px-2`}
+                        >post</button
+                    >
+                </span>
+            </form>
+        </div>
+    </div>
+    <div
+        class="mt-2 flex h-fit flex-col space-y-2 rounded-md bg-secondary-dark  p-2 shadow-md md:w-80"
+    >
+        <span class="pl-1 underline">Usage</span>
+        <ul class="space-y-2">
+            <li class=" border-l border-red-400 pl-2">
+                Submit a text post in a category.
+            </li>
+            <li class="border-l border-red-400 pl-2">
+                Use the random button to generate a test thread.
+            </li>
+        </ul>
+        <span class="pl-1 underline">Rules</span>
+        <ul class="space-y-2">
+            <li class="border-l border-red-400 pl-2">Behave.</li>
+        </ul>
     </div>
 </div>
