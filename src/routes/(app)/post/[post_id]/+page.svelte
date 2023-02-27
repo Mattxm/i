@@ -142,7 +142,7 @@
 </Dialog>
 
 <div
-    class="mx-auto flex min-h-screen max-w-7xl flex-1 border-thirdary px-2 md:px-4"
+    class="mx-auto flex min-h-screen max-w-5xl flex-1 border-thirdary px-2 md:px-4"
 >
     <div class="mt-2 flex w-full flex-col ">
         <div class="flex flex-col space-y-1">
@@ -275,32 +275,34 @@
 
         <div class="my-4 h-px bg-thirdary" />
 
-        <div class="flex">
-            <form
-                on:submit|preventDefault={CreateComment}
-                class="flex w-full flex-col break-words "
-            >
-                <label for="commentbox">Post a comment</label>
-                <TextArea
-                    value={newcomment}
-                    rows={4}
-                    on:changedoi={(v) => {
-                        newcomment = v.detail
-                    }}
-                />
+        {#if $page.data?.session}
+            <div class="flex">
+                <form
+                    on:submit|preventDefault={CreateComment}
+                    class="flex w-full flex-col break-words "
+                >
+                    <label for="commentbox">Post a comment</label>
+                    <TextArea
+                        value={newcomment}
+                        rows={4}
+                        on:changedoi={(v) => {
+                            newcomment = v.detail
+                        }}
+                    />
 
-                <span class="mt-2 w-full space-x-2 text-right text-sm">
-                    <!-- <button
+                    <span class="mt-2 w-full space-x-2 text-right text-sm">
+                        <!-- <button
                         on:click|preventDefault={() => {
                             ShowPreview = !ShowPreview
                         }}
                         class=""
                         >{`${ShowPreview ? 'Hide' : 'Show'} Preview`}</button
                     > -->
-                    <button class="">Submit</button>
-                </span>
-            </form>
-        </div>
+                        <button class="">Submit</button>
+                    </span>
+                </form>
+            </div>
+        {/if}
 
         <!-- <div
             hidden={!ShowPreview}
@@ -323,7 +325,7 @@
                     >Nothing here, be the first to comment on this post.</span
                 >
             {:else}
-                <span class="">Login or Signup to comment.</span>
+                <span class="">Login or Sign Up to comment.</span>
             {/if}
         </div>
     </div>

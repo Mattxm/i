@@ -3,7 +3,7 @@
     import { page } from '$app/stores'
 </script>
 
-<div class="mx-auto min-h-screen max-w-7xl">
+<div class="mx-auto min-h-screen max-w-5xl">
     <div class="flex px-4 pb-4 pt-2 ">
         <div
             class="mr-4 h-12 w-12 flex-none rounded-full bg-thirdary  dark:bg-white"

@@ -86,7 +86,7 @@
 </svelte:head>
 
 <div
-    class="mx-auto flex max-w-7xl flex-col-reverse justify-center px-2 md:flex-row md:space-x-2"
+    class="mx-auto flex max-w-5xl flex-col-reverse justify-center px-2 md:flex-row md:space-x-2"
 >
     <div class="mt-2 flex flex-1 shadow-md">
         <div

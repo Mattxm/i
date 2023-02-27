@@ -27,7 +27,7 @@
     <html lang="en" />
 </svelte:head>
 
-<div class="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4">
+<div class="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4">
     <div class="mt-2 flex">
         <div
             class="mr-4 h-16 w-16 flex-none rounded-full bg-thirdary  dark:bg-white"
@@ -87,14 +87,37 @@
         <div class="my-1 h-px w-full bg-thirdary" />
         {#if posts.length > 0}
             {#each posts as post}
-                <span class=" flex flex-col overflow-hidden text-sm">
-                    <a
-                        href={`/post/${post.post_id}`}
-                        class="mr-4 break-words hover:underline">{post.title}</a
-                    >
-                    <span class="text-neutral-400"
-                        >{timeBetween(post.created_at)}</span
-                    >
+                <span class=" flex flex-col overflow-hidden text-sm ">
+                    <div>
+                        <a
+                            href={`/post/${post.post_id}`}
+                            class="mr-4 break-words hover:underline"
+                            >{post.title}</a
+                        >
+                    </div>
+
+                    <div class="flex space-x-1">
+                        <div class="text-neutral-300">
+                            {timeBetween(post.created_at)}
+                        </div>
+                        <div class="text-neutral-300">in</div>
+                        <a
+                            class="text-blue-400 hover:underline"
+                            href={`/?search=${post.tags}&post=true`}
+                            >{post.tags}</a
+                        >
+                    </div>
+                    <div class="flex space-x-1">
+                        <span class="text-sm text-neutral-300">
+                            <a
+                                href={`/post/${post.post_id}`}
+                                class=" hover:underline"
+                                >{post.comments[0].count == 1
+                                    ? `${post.comments[0].count} comment`
+                                    : `${post.comments[0].count} comments`}</a
+                            >
+                        </span>
+                    </div>
                 </span>
             {/each}
         {:else}
@@ -105,22 +128,30 @@
         {#if comments.length > 0}
             {#each comments as comment}
                 <span class="flex flex-col line-clamp-4">
-                    <div class="markdown">{comment.content}</div>
-                    <span class="overflow-hidden text-sm text-neutral-400"
-                        >In
+                    <span class="overflow-hidden text-sm text-neutral-300">
                         <a
                             href={`/post/${comment.posts.post_id}`}
                             class="break-words hover:underline"
                         >
-                            "{comment.posts.title}"
+                            {comment.posts.title}
                         </a>
                         by
                         <a
                             href={`/user/${comment.posts.profiles.username}`}
-                            class="break-words hover:underline"
+                            class="break-words text-blue-400 hover:underline"
                             >{comment.posts.profiles.username}</a
                         >
+                        in
+                        <a
+                            class="text-blue-400 hover:underline"
+                            href={`/?search=${comment.posts.tags}&post=true`}
+                            >{comment.posts.tags}</a
+                        >
                     </span>
+                    <div class="pl-2">
+                        <pre
+                            class=" overflow-x-auto whitespace-pre-wrap break-words">{comment.content}</pre>
+                    </div>
                 </span>
             {/each}
         {:else}

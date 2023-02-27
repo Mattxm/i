@@ -212,20 +212,14 @@
     as="div"
     class="fixed inset-0"
 >
-    <DialogOverlay class="fixed inset-0 z-0 bg-black bg-opacity-25" />
+    <DialogOverlay class="fixed inset-0 z-0 bg-black bg-opacity-75" />
     <div
         class="pointer-events-none fixed inset-0 flex items-center justify-center overflow-y-auto"
     >
         <div
             class=" pointer-events-auto overflow-hidden rounded-sm border border-thirdary bg-secondary-light dark:bg-secondary-dark"
         >
-            <DialogTitle class="px-4 py-2 text-center text-lg">
-                {#if CurAuthIndex == 0}
-                    Log In
-                {:else}
-                    Sign Up
-                {/if}
-            </DialogTitle>
+            <DialogTitle class="px-4 py-2 text-center text-lg" />
             <DialogDescription class="hidden">
                 {#if CurAuthIndex == 0}
                     Log in to an existing user.
@@ -238,7 +232,7 @@
                 manual
                 on:change={(e) => (CurAuthIndex = e.detail)}
             >
-                <TabList class="mx-4 space-x-4 text-sm">
+                <TabList class="mx-4 space-x-4">
                     <Tab
                         class={`${
                             CurAuthIndex == 0
