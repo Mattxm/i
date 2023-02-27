@@ -6,7 +6,6 @@ export const load = async ({ url }) => {
     let query = new URLSearchParams(url.search)
     let searchQuery = query.get('search') ?? ''
     let type = query.get('post')
-    console.log(type)
     if (type == 'false') {
         let { data: profiles, error } = await supabase
             .from('profiles')
