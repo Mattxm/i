@@ -1,10 +1,10 @@
 <script lang="ts">
-    import Postresult from '$lib/postresult.svelte'
+    import PostResult from '$lib/PostResult.svelte'
     import { page } from '$app/stores'
+    import UserResult from '$lib/UserResult.svelte'
     $: success = $page.data.success
     $: type = $page.data.type
     $: results = $page.data.data
-    $: console.log(results)
 </script>
 
 <svelte:head>
@@ -22,14 +22,18 @@
             {#if results.length > 0}
                 <ul class="w-full">
                     {#each results as post}
-                        <Postresult {post} />
+                        <PostResult {post} />
                     {/each}
                 </ul>
             {:else}
                 <div class="mt-2 w-full text-center">No Results</div>
             {/if}
         {:else}
-            <div>User Search (Not Implemented)</div>
+            <ul class="w-full">
+                {#each results as user}
+                    <UserResult {user} />
+                {/each}
+            </ul>
         {/if}
     {:else}
         Error
