@@ -214,9 +214,8 @@
             </div>
         </div>
 
-        <p class="text-center text-xs text-zinc-800 dark:text-zinc-300">
-            You do not have to confirm your email, after signing up you will
-            automatically be logged in.
+        <p class="text-center text-xs text-neutral-800 dark:text-neutral-400">
+            Email confirmations are <strong>not</strong> enabled for this project.
         </p>
         <button
             type="submit"
